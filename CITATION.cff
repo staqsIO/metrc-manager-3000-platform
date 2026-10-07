@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata in this file."
+type: software
+title: "Metrc-Formul8-OS — Platform"
+license: MIT
+repository-code: "https://github.com/staqsIO/metrc-formul8-os-platform"
+authors:
+  - name: "Staqs, Inc."
+    website: "https://staqs.io"
+  - name: "Formul8"
+    website: "https://formul8.ai"
+  - name: "UMB Advisors"
+    website: "https://umbadvisors.com"

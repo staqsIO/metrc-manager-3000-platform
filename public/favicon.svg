@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="1300"
+   height="1300"
+   viewBox="0 0 1300.0001 1300"
+   id="svg5"
+   sodipodi:docname="Color Logo with Background (1).svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5">
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#SvgjsLinearGradient2040"
+       id="linearGradient5"
+       gradientTransform="scale(0.99788807,1.0021164)"
+       x1="103.01757"
+       y1="198.38016"
+       x2="197.61736"
+       y2="198.38016"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#SvgjsLinearGradient2040"
+       id="linearGradient6"
+       gradientTransform="scale(1.2241132,0.81691793)"
+       x1="5.3390193"
+       y1="7.693594"
+       x2="239.25662"
+       y2="7.693594"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#SvgjsLinearGradient2040"
+       id="linearGradient7"
+       gradientTransform="scale(0.99786813,1.0021364)"
+       x1="7.014955"
+       y1="6.4861426"
+       x2="293.5029"
+       y2="6.4861426"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#SvgjsLinearGradient2040"
+       id="linearGradient8"
+       gradientTransform="scale(0.99786813,1.0021364)"
+       x1="7.014955"
+       y1="6.4861426"
+       x2="293.5029"
+       y2="6.4861426"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#SvgjsLinearGradient2040"
+       id="linearGradient9"
+       gradientTransform="scale(0.99786813,1.0021364)"
+       x1="7.014955"
+       y1="6.4861426"
+       x2="293.5029"
+       y2="6.4861426"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#SvgjsLinearGradient2040"
+       id="linearGradient10"
+       gradientTransform="scale(0.99786813,1.0021364)"
+       x1="7.014955"
+       y1="6.4861426"
+       x2="293.5029"
+       y2="6.4861426"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.16684619"
+     inkscape:cx="1567.3118"
+     inkscape:cy="949.97676"
+     inkscape:window-width="1728"
+     inkscape:window-height="1056"
+     inkscape:window-x="0"
+     inkscape:window-y="33"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg5" />
+  <g
+     transform="matrix(8.5714286,0,0,8.5714286,-850.9732,47.509977)"
+     id="g5">
+    <defs
+       id="SvgjsDefs2033">
+      <linearGradient
+         id="SvgjsLinearGradient2040">
+        <stop
+           id="SvgjsStop2041"
+           stop-color="#00ff8f"
+           offset="0" />
+        <stop
+           id="SvgjsStop2042"
+           stop-color="#00a1ff"
+           offset="1" />
+      </linearGradient>
+      <linearGradient
+         id="SvgjsLinearGradient2043">
+        <stop
+           id="SvgjsStop2044"
+           stop-color="#00ff8f"
+           offset="0" />
+        <stop
+           id="SvgjsStop2045"
+           stop-color="#00a1ff"
+           offset="1" />
+      </linearGradient>
+    </defs>
+    <g
+       id="SvgjsG2034"
+       featureKey="cWd8YO-0"
+       transform="matrix(0.48892649,0,0,0.48892649,101.80459,-3.0729174)"
+       fill="url(#SvgjsLinearGradient2040)"
+       style="fill:url(#linearGradient10)">
+      <g
+         id="g4"
+         style="fill:url(#linearGradient9)">
+        <g
+           id="g3"
+           style="fill:url(#linearGradient8)">
+          <defs
+             id="defs1">
+            <rect
+               id="b"
+               x="7"
+               y="6.5"
+               width="286"
+               height="287.10001" />
+          </defs>
+          <clipPath
+             id="a">
+            <use
+               xlink:href="#b"
+               overflow="visible"
+               id="use1" />
+          </clipPath>
+          <g
+             style="fill:url(#linearGradient7)"
+             clip-path="url(#a)"
+             id="g2">
+            <path
+               d="m 150,198.8 c 26.1,0 47.2,21.2 47.2,47.4 0,26.2 -21.1,47.4 -47.2,47.4 -26.1,0 -47.2,-21.2 -47.2,-47.4 0,-26.2 21.1,-47.4 47.2,-47.4 z"
+               id="path1"
+               style="fill:url(#linearGradient5)" />
+            <path
+               d="m 198.7,152.9 c -0.1,-1.1 -0.1,-2.2 -0.1,-3.3 0.1,-12.4 -4.5,-24.4 -13.3,-33.2 l -2,-2 c -8.7,-8.7 -20.5,-13.4 -32.8,-13.3 -0.2,0 -0.5,0 -0.7,0 -0.2,0 -0.5,0 -0.7,0 -12.3,-0.2 -24.1,4.6 -32.8,13.3 l -2,2 c -8.8,8.8 -13.3,20.8 -13.3,33.2 0,1.1 0,2.2 -0.1,3.3 -1.3,23.3 -19.8,42.4 -43.1,44.3 -29.3,2.5 -53.5,-21.9 -51.1,-51.3 1.9,-23.3 21,-41.8 44.1,-43.2 1,-0.1 2.2,-0.1 3.2,-0.1 12.4,0.1 24.3,-4.5 33.1,-13.3 l 2,-2 c 8.8,-8.8 13.3,-20.8 13.3,-33.2 0,-1.6 0.1,-3.3 0.2,-4.9 2.1,-22.9 20.8,-41.1 43.7,-42.8 27.7,-1.9 50.7,20 50.7,47.2 0,0.2 0,0.5 0,0.7 -0.2,12.3 4.6,24.2 13.3,32.9 l 2,2 c 8.8,8.8 20.7,13.4 33.1,13.3 1,0 2.1,0 3.2,0.1 23.3,1.3 42.2,19.9 44.1,43.2 2.5,29.4 -21.8,53.7 -51.1,51.3 -23.1,-1.8 -41.5,-21 -42.9,-44.2 z"
+               id="path2"
+               style="fill:url(#linearGradient6)" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       id="SvgjsG2035"
+       featureKey="TZbA6h-0"
+       transform="matrix(2.1524619,0,0,2.1524619,-3.5931047,143.40237)"
+       fill="#ffffff" />
+  </g>
+</svg>

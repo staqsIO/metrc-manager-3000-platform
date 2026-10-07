@@ -1,0 +1,60 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/src/services/copilot/evals/results/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# environment files (ALL environments - never commit secrets)
+.env
+.env.*
+!.env.example
+.env*.local
+
+# direnv (per-project env vars; contains tokens — never commit)
+.envrc
+
+# Security-sensitive
+*.key
+*.p12
+*.pfx
+core
+core.*
+*.dmp
+
+# customer data (CSVs, imports)
+/data/
+
+# vercel
+.vercel
+
+# lockfile (this project uses pnpm)
+package-lock.json
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

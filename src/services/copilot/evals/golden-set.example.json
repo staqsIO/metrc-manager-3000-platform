@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "description": "Seed golden set for Copilot eval harness. Replace with your full real question list. These 3 questions exist to prove the runner works end-to-end and to lock Bug A/B/D fixes as regression guards.",
+  "questions": [
+    {
+      "id": "bug-b-gummy-hashables-total",
+      "question": "How many gummy hashables do we have?",
+      "notes": "Bug B regression guard. Prior behavior: search_packages returned one package showing 18,040 and the Copilot reported that as the total. Correct behavior: answer uses aggregated total across ALL matching packages, either via get_inventory_overview or via search_packages.aggregatedQuantityByItem. Must NOT report a single package quantity as the total.",
+      "expectedTools": ["get_inventory_overview"],
+      "forbiddenTools": [],
+      "expectContains": ["gummy"],
+      "maxDurationMs": 15000
+    },
+    {
+      "id": "bug-d-inventory-total-agreement",
+      "question": "How many total packages do we have?",
+      "notes": "Bug D regression guard. Copilot total must match dashboard inventory total ±1%. Tests the service-layer single-source-of-truth principle.",
+      "expectedTools": ["get_inventory_overview"],
+      "forbiddenTools": [],
+      "maxDurationMs": 10000
+    },
+    {
+      "id": "compliance-fifo-count",
+      "question": "What's our FIFO violation count?",
+      "notes": "Compliance accuracy check. Previous sprint fixed briefing/alerts divergence — this test locks that in.",
+      "expectedTools": ["detect_fifo_violations"],
+      "maxDurationMs": 10000
+    }
+  ]
+}

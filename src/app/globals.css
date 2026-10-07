@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Color values use the original deep-blue palette, while
+       keeping the structural improvements (font tokens, smaller radius,
+       semantic signal-critical/caution, surface-rule class, status helpers).
+       Reverted: --background, --foreground, --card, --primary, --secondary,
+       --muted, --accent, --destructive, --border, --input, --ring back to
+       their original HSL values. */
+
+    /* Original deep-blue dark theme */
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+    --card: 224 65% 3%;
+    --card-foreground: 210 40% 98%;
+    --popover: 224 65% 3%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 142 76% 36%;        /* original emerald */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 217 33% 10%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 10%;
+    --muted-foreground: 217 10% 65%;
+    --accent: 217 33% 10%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 12%;
+    --input: 217 33% 10%;
+    --ring: 142 76% 36%;
+
+    /* Semantic signals — kept as Phase 1 additions. The new components
+       (FacilityListRow, KpiCard, AiBriefingSection) reference these for
+       status accents. Tuned to read against the deep-blue background. */
+    --signal-critical: 0 84% 60%;   /* tracks --destructive */
+    --signal-caution: 40 95% 55%;   /* warm amber, brighter against deep blue */
+
+    /* Tightened corner radius preserved — non-color structural choice */
+    --radius: 0.25rem;
+
+    /* Typography stacks — set in layout.tsx via next/font CSS variables.
+       --font-ui = Inter (default sans), --font-numeric = IBM Plex Mono */
+
+    /* Spacing (unchanged) */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+
+    /* Shadows are intentionally minimized — instrument panel uses borders, not blur */
+    --shadow-sm: 0 1px 0 0 rgb(0 0 0 / 0.4);
+    --shadow-md: 0 1px 0 0 rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 1px 0 0 rgb(0 0 0 / 0.4);
+    --shadow-xl: 0 1px 0 0 rgb(0 0 0 / 0.4);
+
+    /* Glassmorphism — deprecated. Kept variable defs for backward compat
+       but `.glass`/`.glass-card` should not be used in new code. */
+    --glass-bg: rgba(255, 255, 255, 0.02);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-backdrop: blur(8px);
+  }
+
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Loading skeleton */
+.loading-skeleton {
+  @apply animate-pulse bg-muted rounded;
+}
+
+/* Smooth transitions */
+.smooth-transition {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+/* Modern glassmorphism effects */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+}
+
+.glass-card {
+  @apply glass rounded-xl p-6;
+  box-shadow: var(--shadow-xl);
+}
+
+/* ----------------------------------------------------------------------
+   Container primitives
+   ----------------------------------------------------------------------
+   `.surface-rule`  — new primary container. Flat, hairline-bordered, no blur,
+                      no shadow. Use for any data-surface (KPI tile, table,
+                      section block). Replaces `.card-modern` in new code.
+   `.card-modern`   — DEPRECATED alias mapping to .surface-rule visuals so
+                      existing 100+ usages don't break during migration.
+                      Sweep + remove in Phase 2.
+*/
+
+.surface-rule {
+  @apply rounded border border-border bg-card;
+  transition: border-color 0.15s ease-out;
+}
+
+.surface-rule:hover {
+  @apply border-border;  /* no glow; row-level hover handled by .surface-rule-row */
+}
+
+.surface-rule-row {
+  @apply border-l-2 border-transparent transition-colors duration-150 ease-out;
+}
+
+.surface-rule-row:hover {
+  border-left-color: hsl(var(--primary));
+}
+
+.card-modern {
+  @apply rounded border border-border bg-card;
+  transition: border-color 0.15s ease-out;
+}
+
+.card-modern:hover {
+  @apply border-border;
+}
+
+/* ----------------------------------------------------------------------
+   Status indicators — text-driven, left-rule accent. No filled pills.
+   Old `.status-*` classes preserved for now but should not be used in new code.
+*/
+
+.status-active {
+  @apply text-foreground border-l-2 pl-2;
+  border-left-color: hsl(var(--primary));
+}
+
+.status-warning {
+  @apply text-foreground border-l-2 pl-2;
+  border-left-color: hsl(var(--signal-caution));
+}
+
+.status-critical {
+  @apply text-foreground border-l-2 pl-2;
+  border-left-color: hsl(var(--signal-critical));
+}
+
+.status-info {
+  @apply text-muted-foreground border-l-2 pl-2;
+  border-left-color: hsl(var(--border));
+}
+
+/* Modern scrollbar */
+.scrollbar-modern {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+.scrollbar-modern::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-modern::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-modern::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+.scrollbar-modern::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Copilot prose — formatting for AI responses in narrow sidebar */
+.copilot-prose > *:first-child {
+  margin-top: 0;
+}
+
+.copilot-prose table td:has(strong) {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Compact mode — hide/truncate when copilot sidebar is open */
+[data-sidebar-open="true"] .compact-hide {
+  display: none !important;
+}
+
+[data-sidebar-open="true"] .compact-truncate {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Facility card variant — same flat surface-rule treatment with row-level
+   left-accent on hover. Maintains current API for callers. */
+.card-facility {
+  @apply rounded border border-border bg-card border-l-2 border-l-transparent transition-colors duration-150 ease-out;
+}
+.card-facility:hover {
+  border-left-color: hsl(var(--primary));
+}
+
+/* View toggle segmented control */
+.view-toggle {
+  @apply flex items-center rounded-lg border border-border/50 bg-muted/30 p-0.5;
+}
+
+/* Accessibility: reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse {
+    animation: none;
+    opacity: 0.5;
+  }
+  .card-facility {
+    transition: none !important;
+  }
+}

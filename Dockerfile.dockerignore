@@ -1,0 +1,9 @@
+**/node_modules
+**/.next
+**/.git
+**/dist
+**/.env
+**/.env.*
+metrc-formul8-os/
+metrc-formul8-os-mcp/
+metrc-formul8-os-keyservice/

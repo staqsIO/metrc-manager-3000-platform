@@ -1,0 +1,312 @@
+{
+  "version": "1.0",
+  "description": "Dispensary golden set generated from golden-questions-by-facility.csv",
+  "questions": [
+    {
+      "id": "q001",
+      "question": "What is our current finished goods and raw material status?",
+      "expectedTools": [
+        "get_inventory_overview",
+        "get_harvest_summary",
+        "get_plant_batch_summary"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q002",
+      "question": "Where is our current finished goods and raw materials located both physically and in process currently?",
+      "expectedTools": [
+        "get_inventory_overview",
+        "get_pipeline_summary"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q003",
+      "question": "Do I have any packages that haven't moved in 30, 60, or 90 days?",
+      "expectedTools": [
+        "detect_slow_moving"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q004",
+      "question": "What material is at risk of expiring before it can be processed or transferred?",
+      "expectedTools": [
+        "get_expiring_material"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q005",
+      "question": "How fragmented are my active packages across my storage locations?",
+      "expectedTools": [
+        "detect_fragmentation"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q006",
+      "question": "Do I have any FIFO violations — older packages sitting while newer packages move?",
+      "expectedTools": [
+        "detect_fifo_violations"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q007",
+      "question": "Do I have enough packaging available to meet demand for the next 6 weeks?",
+      "expectedTools": [
+        "analyze_inventory_run_rate",
+        "query_supply_inventory"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q008",
+      "question": "What are the top products transferring out of my facility?",
+      "expectedTools": [
+        "get_transfer_summary"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q009",
+      "question": "What did we harvest?",
+      "expectedTools": [
+        "get_harvest_summary"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q010",
+      "question": "What material do we have to process?",
+      "expectedTools": [
+        "recommend_biomass_usage"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q011",
+      "question": "What do we make next?",
+      "expectedTools": [
+        "recommend_biomass_usage"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q012",
+      "question": "What is my transfer loss from harvest to final product? Where is it occurring?",
+      "expectedTools": [
+        "get_transfer_loss"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q013",
+      "question": "What's my yield on X process?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q014",
+      "question": "Should we decontaminate this material or waste it?",
+      "expectedTools": [
+        "run_compliance_audit"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q015",
+      "question": "Can this material go to distillate?",
+      "expectedTools": [
+        "analyze_biomass"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q016",
+      "question": "Who grams the most per day?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q017",
+      "question": "What plant batches are ready to harvest in the next 14 days?",
+      "expectedTools": [
+        "get_harvest_forecast"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q018",
+      "question": "What is my average days from clone to harvest by strain?",
+      "expectedTools": [
+        "get_cycle_time_analysis"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q019",
+      "question": "Which strains are my highest yielders?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q020",
+      "question": "What is my current processing throughput vs. my harvest intake rate?",
+      "expectedTools": [
+        "get_throughput_analysis"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q021",
+      "question": "How long has X material been sitting unprocessed?",
+      "expectedTools": [
+        "analyze_aging",
+        "detect_slow_moving"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q022",
+      "question": "What is the value of the active packages currently in each stage of our pipeline?",
+      "expectedTools": [
+        "get_pipeline_valuation"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q023",
+      "question": "Do I have any potency drift?",
+      "expectedTools": [
+        "get_potency_trends"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q024",
+      "question": "Is X process compliant?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q025",
+      "question": "What is my lab failure rate by strain?",
+      "expectedTools": [
+        "get_lab_test_results"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q026",
+      "question": "Am I audit-ready right now?",
+      "expectedTools": [
+        "get_audit_readiness_report",
+        "run_compliance_audit",
+        "evaluate_business_rules"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q027",
+      "question": "What plants are at risk of compliance issues right now?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q028",
+      "question": "Where are we losing money?",
+      "expectedTools": [
+        "get_loss_analysis"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q029",
+      "question": "What is my 280E tax exposure and where can I optimize it?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q030",
+      "question": "What is selling?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q031",
+      "question": "What is selling AND what does that tell us about what to make next?",
+      "expectedTools": [
+        "get_top_products",
+        "analyze_inventory_run_rate"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q032",
+      "question": "Where are we losing money — margin and COGS view?",
+      "expectedTools": [
+        "get_loss_analysis",
+        "get_package_cogs"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q033",
+      "question": "What is our packaging runway given current sales velocity?",
+      "expectedTools": [
+        "analyze_inventory_run_rate"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q034",
+      "question": "Do I have enough inventory to run a promo without stocking out?",
+      "expectedTools": [
+        "analyze_inventory_run_rate"
+      ],
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q035",
+      "question": "What is my category margin performance across all locations?",
+      "maxDurationMs": 60000,
+      "skip": false
+    },
+    {
+      "id": "q036",
+      "question": "How many critical packages do we have?",
+      "maxDurationMs": 60000,
+      "skip": false
+    }
+  ]
+}

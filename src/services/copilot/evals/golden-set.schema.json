@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Copilot Golden Set",
+  "description": "Regression test set for Copilot correctness. Each question asserts tool selection + answer shape.",
+  "type": "object",
+  "required": ["version", "questions"],
+  "properties": {
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier for the test case (e.g., 'bug-b-gummy-hashables')"
+          },
+          "question": {
+            "type": "string",
+            "description": "Natural-language prompt sent to the Copilot"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Why this test exists — link to bug or user story"
+          },
+          "expectedTools": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Tools that MUST be called (subset match — others may also be invoked)"
+          },
+          "forbiddenTools": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Tools that MUST NOT be called (e.g., search_packages for a count query)"
+          },
+          "expectContains": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Substrings that must appear in the response (case-insensitive)"
+          },
+          "expectNumericNear": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "number" },
+              "tolerance": { "type": "number", "description": "Fractional tolerance, default 0.01 (1%)" }
+            },
+            "description": "A number that must appear in the response within ±tolerance * value"
+          },
+          "maxDurationMs": {
+            "type": "number",
+            "description": "Test fails if response takes longer than this (default 10000)"
+          },
+          "skip": {
+            "type": "boolean",
+            "description": "Temporarily skip this test (with a reason in notes)"
+          }
+        }
+      }
+    }
+  }
+}
