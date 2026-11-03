@@ -2,12 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { getBrand } from '@/lib/brand'
 import { BrandMark } from '@/shared/components/BrandMark'
 
+// Full page load, not router.push: the root layout renders the sidebar and other
+// signed-in chrome server-side from the session, and App Router keeps that layout
+// (rendered while signed out) across client-side navigation.
+function goToApp() {
+  window.location.assign('/executive')
+}
+
 export default function SignInPage() {
-  const router = useRouter()
   const brand = getBrand()
   const [error, setError] = useState('')
   const [isAutoLogging, setIsAutoLogging] = useState(false)
@@ -43,7 +48,7 @@ export default function SignInPage() {
           setError('Invalid or expired token')
           setIsAutoLogging(false)
         } else {
-          router.push('/executive')
+          goToApp()
         }
       } catch {
         setError('An error occurred. Please try again.')
@@ -56,7 +61,7 @@ export default function SignInPage() {
     }
 
     runAutoLogin()
-  }, [router])
+  }, [])
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -100,7 +105,7 @@ export default function SignInPage() {
                   redirect: false,
                 })
                 if (res?.error) setError('Invalid email or password')
-                else router.push('/executive')
+                else goToApp()
               }}
             >
               <input name="email" type="email" required autoComplete="email" placeholder="Email"
