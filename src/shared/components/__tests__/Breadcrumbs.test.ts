@@ -10,8 +10,11 @@ function foldersWithoutPage(dir: string): string[] {
   const out: string[] = [];
   for (const name of readdirSync(dir)) {
     const full = join(dir, name);
-    if (!statSync(full).isDirectory() || name.startsWith('[') || name.startsWith('(')) continue;
-    if (!existsSync(join(full, 'page.tsx'))) out.push(name);
+    if (!statSync(full).isDirectory()) continue;
+    // A dynamic segment's crumb is a real id and a route group is not in the URL, so neither
+    // needs an entry itself, but folders nested inside them still do.
+    const literal = !name.startsWith('[') && !name.startsWith('(');
+    if (literal && !existsSync(join(full, 'page.tsx'))) out.push(name);
     out.push(...foldersWithoutPage(full));
   }
   return out;
