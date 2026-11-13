@@ -12,8 +12,9 @@ type CreateContextOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   session: any;
   activeOrgId: string | null;
-  /** Raw X-Forwarded-For, used only for the demo's free-question limit. */
+  /** Raw client-address headers, used only for the demo's free-question limit. */
   forwardedFor?: string | string[] | null;
+  realIp?: string | string[] | null;
 };
 
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
@@ -26,13 +27,14 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
     activeOrgId: opts.activeOrgId,
     // Spread so the field stays optional for createCaller in tests and server components.
     ...(opts.forwardedFor != null ? { forwardedFor: opts.forwardedFor } : {}),
+    ...(opts.realIp != null ? { realIp: opts.realIp } : {}),
   };
 };
 
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const session = await getServerSession(opts.req, opts.res, authOptions);
   const activeOrgId = opts.req.cookies[ACTIVE_ORG_COOKIE] ?? null;
-  return createInnerTRPCContext({ session, activeOrgId, forwardedFor: opts.req.headers['x-forwarded-for'] ?? null });
+  return createInnerTRPCContext({ session, activeOrgId, forwardedFor: opts.req.headers['x-forwarded-for'] ?? null, realIp: opts.req.headers['x-real-ip'] ?? null });
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create();

@@ -33,15 +33,32 @@ export function demoQuotaLimits(env: Record<string, string | undefined>): DemoQu
 }
 
 /**
- * The last X-Forwarded-For entry: the address our proxy saw. Earlier entries come from the
- * client and can be anything, so trusting the first would let a visitor pick a fresh bucket
- * per request.
+ * The visitor's address: the last X-Forwarded-For entry, which the nearest proxy appends.
+ * Never the first entry, which the client writes.
+ *
+ * Some proxies set X-Real-IP instead. On the Railway demo the last X-Forwarded-For entry was
+ * not the visitor (measured 2026-11-13) and X-Real-IP was, because Railway's edge overwrites
+ * it. Elsewhere a client may send any X-Real-IP it likes and get a fresh bucket each time, so
+ * it is used only when the host says its proxy sets it (`trustRealIp`, from DEMO_TRUST_REAL_IP).
  */
-export function clientIp(forwardedFor: string | string[] | null | undefined): string {
+export function clientIp(
+  forwardedFor: string | string[] | null | undefined,
+  realIp?: string | string[] | null,
+  trustRealIp = false,
+): string {
+  const real = trustRealIp ? (Array.isArray(realIp) ? realIp[0] : realIp)?.trim() : undefined;
+  if (real) return ipv6Network(real);
   const raw = Array.isArray(forwardedFor) ? forwardedFor.join(',') : forwardedFor ?? '';
   const last = raw.split(',').map((s) => s.trim()).filter(Boolean).pop();
   return last ? ipv6Network(last) : 'unknown';
 }
+
+/** clientIp with the trust setting read from the environment. */
+export const visitorIp = (
+  forwardedFor: string | string[] | null | undefined,
+  realIp: string | string[] | null | undefined,
+  env: Record<string, string | undefined> = process.env,
+): string => clientIp(forwardedFor, realIp, env.DEMO_TRUST_REAL_IP === '1');
 
 /** One IPv6 client usually holds a whole /64, so it counts as one visitor. IPv4 is unchanged. */
 function ipv6Network(ip: string): string {
