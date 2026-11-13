@@ -90,7 +90,7 @@ pnpm test:e2e    # end-to-end tests (playwright)
 
 ## Contributors
 
-Created by [Staqs](https://github.com/staqsIO), [Formul8](https://github.com/F8ai) and [UMB Advisors](https://github.com/UMB-Advisors). See the [root repository](https://github.com/staqsIO/metrc-formul8-os#contributors) for details.
+Created by [Staqs](https://github.com/staqsIO), [Waev Tech](https://github.com/waevtech) and [UMB Advisors](https://github.com/UMB-Advisors). See the [root repository](https://github.com/staqsIO/metrc-formul8-os#contributors) for details.
 
 ## License
 
