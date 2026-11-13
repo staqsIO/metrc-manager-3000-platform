@@ -50,6 +50,15 @@ const LOCATIONS = [
 
 const LAB_STATES = ['NotSubmitted', 'SubmittedForTesting', 'TestPassed', 'TestFailed'];
 
+// A store-hours timestamp (09:00–21:00 UTC) within the last `daysBack` days, never in the future.
+function randomSaleTime(daysBack: number): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() - Math.floor(Math.random() * daysBack));
+  d.setUTCHours(9 + Math.floor(Math.random() * 12), Math.floor(Math.random() * 60), 0, 0);
+  if (d > new Date()) d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString();
+}
+
 function randomDate(daysBack: number): string {
   const d = new Date();
   d.setDate(d.getDate() - Math.floor(Math.random() * daysBack));
@@ -339,15 +348,20 @@ export class MetrcMockClient implements IMetrcClient {
     this.plants = generateMockPlants(200);
     this.harvests = generateMockHarvests(30);
     this.plantBatches = generateMockPlantBatches(40);
-    this.salesReceipts = Array.from({ length: 30 }, (_, i) => ({
+    // ~8 receipts a day over 30 days; today's are "active" (not yet finalized), the
+    // rest "inactive", tagged like the v2 client does so the sales syncs can split them.
+    this.salesReceipts = Array.from({ length: 240 }, (_, i) => ({
       Id: 400000 + i,
       ReceiptNumber: `R${String(i + 1).padStart(6, '0')}`,
-      SalesDateTime: randomDate(30),
+      SalesDateTime: randomSaleTime(30),
       SalesCustomerType: randomChoice(['Consumer', 'Patient', 'Caregiver']),
       PatientLicenseNumber: null,
       TotalPackages: Math.floor(Math.random() * 5) + 1,
       TotalPrice: randomFloat(20, 500),
       LastModified: new Date().toISOString(),
+    })).map((r) => ({
+      ...r,
+      _saleStatus: r.SalesDateTime.slice(0, 10) === new Date().toISOString().slice(0, 10) ? 'active' : 'inactive',
     }));
     this.strains = STRAINS.map((name, i) => ({
       Id: 500000 + i,
@@ -455,7 +469,7 @@ export class MetrcMockClient implements IMetrcClient {
       const category = randomChoice(ITEM_CATEGORIES);
       const isWeight = ['Flower', 'Trim', 'Shake'].includes(category);
       return {
-        PackageId: deliveryId * 1000 + i + 1,
+        PackageId: (deliveryId % 100000) * 100 + i + 1, // stays inside INT4
         PackageLabel: makeLabel(deliveryId * 10 + i + 1),
         PackageType: 'Product',
         ItemName: `${strain} ${category}`,
