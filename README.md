@@ -1,4 +1,4 @@
-# METRC Formul8 OS - Platform
+# METRC Manager 3000
 
 A self-hosted web app for cannabis operators: METRC compliance and inventory dashboards, operational and financial analytics, and an AI Copilot. Built with Next.js, tRPC, Prisma and PostgreSQL.
 
