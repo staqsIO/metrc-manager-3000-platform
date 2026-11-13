@@ -16,7 +16,7 @@ export default function SignInPage() {
   const brand = getBrand()
   const [error, setError] = useState('')
   const [isAutoLogging, setIsAutoLogging] = useState(false)
-  const [providers, setProviders] = useState<{ google: boolean; signupEnabled: boolean } | null>(null)
+  const [providers, setProviders] = useState<{ google: boolean; signupEnabled: boolean; demo?: { email: string; password: string } | null } | null>(null)
 
   useEffect(() => {
     fetch('/api/auth/options')
@@ -93,7 +93,17 @@ export default function SignInPage() {
               </div>
             )}
 
+            {providers?.demo && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-sm">
+                <p className="font-medium">Public demo — fictional data, reset every night.</p>
+                <p className="mt-1 text-muted-foreground">
+                  Email <code>{providers.demo.email}</code> · Password <code>{providers.demo.password}</code>
+                </p>
+              </div>
+            )}
+
             <form
+              key={providers?.demo ? 'demo' : 'default'}
               className="space-y-3"
               onSubmit={async (e) => {
                 e.preventDefault()
@@ -108,9 +118,9 @@ export default function SignInPage() {
                 else goToApp()
               }}
             >
-              <input name="email" type="email" required autoComplete="email" placeholder="Email"
+              <input name="email" type="email" required autoComplete="email" placeholder="Email" defaultValue={providers?.demo?.email}
                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm" />
-              <input name="password" type="password" required autoComplete="current-password" placeholder="Password"
+              <input name="password" type="password" required autoComplete="current-password" placeholder="Password" defaultValue={providers?.demo?.password}
                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm" />
               <button type="submit"
                 className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">

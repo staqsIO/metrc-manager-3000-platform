@@ -15,12 +15,17 @@ wait_for_db() {
 }
 
 cmd="${1:-web}"; shift || true
-case "$cmd" in migrate|sync|create-admin) wait_for_db ;; esac
+case "$cmd" in migrate|demo-reset|sync|create-admin) wait_for_db ;; esac
 case "$cmd" in
   web)          exec node node_modules/next/dist/bin/next start -H 0.0.0.0 -p "${PORT:-3000}" ;;
   migrate)      node_modules/.bin/prisma migrate deploy
                 node_modules/.bin/tsx prisma/seed.ts
                 if [ -f scripts/bootstrap-llm-from-env.ts ]; then node_modules/.bin/tsx scripts/bootstrap-llm-from-env.ts; fi ;;
+  demo-reset)   # Destructive: wipes the whole database and reseeds fictional demo data.
+                [ "${DEMO_MODE:-}" = "1" ] || { echo "demo-reset refused: set DEMO_MODE=1" >&2; exit 2; }
+                node_modules/.bin/prisma migrate reset --force --skip-seed --skip-generate
+                node_modules/.bin/tsx prisma/seed.ts
+                exec node_modules/.bin/tsx scripts/seed-demo.ts ;;
   sync)         exec node_modules/.bin/tsx scripts/sync-all-facilities.ts "$@" ;;
   create-admin) exec node_modules/.bin/tsx scripts/create-admin.ts "$@" ;;
   cron)         bash /app/docker/crontab.sh > /tmp/crontab
