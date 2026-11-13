@@ -4,6 +4,7 @@ import { createTRPCRouter, facilityProcedure, facilityWriteProcedure } from '@/l
 import type { Prisma } from '@prisma/client';
 import { parseCOAText } from '@/services/engines/coa-parsing-engine';
 import { parseCOAWithLLM } from '@/services/copilot/coa-llm-parser';
+import { takeDemoQuestion } from '@/server/api/demo-ai-gate';
 import type { TerpeneResult, CannabinoidResult, LabInfo, BatchInfo } from '@/services/engines/coa-parsing-engine';
 
 /**
@@ -73,7 +74,7 @@ interface ParsedCOAData {
  * Run the two-tier parsing pipeline.
  * Tier 1 (regex) first. If cannabinoid confidence < threshold, Tier 2 (LLM).
  */
-async function runParsingPipeline(pdfText: string): Promise<ParsedCOAData> {
+async function runParsingPipeline(pdfText: string, mayUseLlm: () => Promise<boolean>): Promise<ParsedCOAData> {
   const tier1Result = parseCOAText(pdfText);
 
   const avgCannabinoidConf = tier1Result.cannabinoids.length > 0
@@ -84,7 +85,8 @@ async function runParsingPipeline(pdfText: string): Promise<ParsedCOAData> {
     return { ...tier1Result, parseTier: 'regex' };
   }
 
-  // Tier 2: LLM fallback
+  // Tier 2: LLM fallback. On the demo it costs a free question; when none are left, keep the regex result.
+  if (!(await mayUseLlm())) return { ...tier1Result, parseTier: 'regex' };
   try {
     const truncatedText = pdfText.length > MAX_LLM_TEXT_LENGTH
       ? pdfText.slice(0, MAX_LLM_TEXT_LENGTH)
@@ -206,7 +208,7 @@ export const coaRouter = createTRPCRouter({
           });
         }
 
-        const result = await runParsingPipeline(pdfText);
+        const result = await runParsingPipeline(pdfText, () => takeDemoQuestion(ctx.forwardedFor));
 
         const preview = {
           fileName: input.fileName,

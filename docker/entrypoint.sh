@@ -25,6 +25,8 @@ case "$cmd" in
                 [ "${DEMO_MODE:-}" = "1" ] || { echo "demo-reset refused: set DEMO_MODE=1" >&2; exit 2; }
                 node_modules/.bin/prisma migrate reset --force --skip-seed --skip-generate
                 node_modules/.bin/tsx prisma/seed.ts
+                # The reset drops the LLM provider rows too; rebuild them from OPENROUTER_API_KEY.
+                node_modules/.bin/tsx scripts/bootstrap-llm-from-env.ts || echo "[demo-reset] LLM bootstrap failed; the Copilot will say AI is disabled" >&2
                 exec node_modules/.bin/tsx scripts/seed-demo.ts ;;
   sync)         exec node_modules/.bin/tsx scripts/sync-all-facilities.ts "$@" ;;
   create-admin) exec node_modules/.bin/tsx scripts/create-admin.ts "$@" ;;

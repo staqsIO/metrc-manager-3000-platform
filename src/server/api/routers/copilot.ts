@@ -20,6 +20,7 @@ import { getDutchieClient } from '@/services/dutchie/dutchie-factory';
 import { computeRunRates } from '@/services/engines/run-rate-engine';
 import { getUserOrgIds } from '@/lib/auth-helpers';
 import { getAccessibleFacilities } from '@/server/api/routers/cross-facility';
+import { demoQuotaStatus, takeDemoQuestionOrThrow } from '@/server/api/demo-ai-gate';
 
 // Skill IDs that work in org mode (no facility required)
 const ORG_SKILLS = new Set(['executive-overview', 'financial-health']);
@@ -237,6 +238,9 @@ export const copilotRouter = createTRPCRouter({
 
   // Send a message and get a response (non-streaming fallback)
   // Supports both facility mode (facilityId provided) and org mode (no facilityId)
+  /** Free questions left for this visitor on the public demo; null on a real install. */
+  demoQuota: platformProcedure.query(({ ctx }) => demoQuotaStatus(ctx.forwardedFor)),
+
   sendMessage: platformProcedure
     .input(z.object({
       facilityId: z.string().optional(),
@@ -256,6 +260,7 @@ export const copilotRouter = createTRPCRouter({
           message: 'Rate limit exceeded. Please wait a moment before sending more messages.',
         });
       }
+      await takeDemoQuestionOrThrow(ctx.forwardedFor);
 
       const historyMapped = input.history?.filter(m => m.role === 'user' || m.role === 'assistant')
         .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));

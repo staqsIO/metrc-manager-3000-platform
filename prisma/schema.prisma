@@ -58,23 +58,23 @@ model UserIdentityMap {
 }
 
 model Organization {
-  id               String                   @id @default(cuid())
-  name             String
-  slug             String                   @unique
-  description      String?
-  logoUrl          String?                  @map("logo_url")
-  website          String?
+  id          String                  @id @default(cuid())
+  name        String
+  slug        String                  @unique
+  description String?
+  logoUrl     String?                 @map("logo_url")
+  website     String?
   // Tenant isolation: PRODUCTION orgs run Metrc API calls and crons normally.
   // DEMO and TEST orgs are non-production: Metrc API is forced to mock, crons skip them.
   // See ADR-020 Phase 3 (FOR-1480). Default is PRODUCTION for backward compat.
-  environment      OrganizationEnvironment  @default(PRODUCTION)
-  createdAt        DateTime                 @default(now())
-  updatedAt        DateTime                 @updatedAt
-  ownerId          String
+  environment OrganizationEnvironment @default(PRODUCTION)
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+  ownerId     String
 
-  owner          User                  @relation("OrganizationOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  memberships    Membership[]
-  domains        OrganizationDomain[]
+  owner       User                 @relation("OrganizationOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  memberships Membership[]
+  domains     OrganizationDomain[]
 
   @@index([environment])
   @@map("organizations")
@@ -84,7 +84,6 @@ enum OrganizationEnvironment {
   PRODUCTION
   DEMO
   TEST
-
 }
 
 // Domain claims for an Organization. When a user signs in with an email whose domain
@@ -97,25 +96,25 @@ enum OrganizationEnvironment {
 // migration — only one org may actively claim a given domain, but PENDING/REJECTED/
 // REVOKED rows for the same domain coexist (history + concurrent claim attempts).
 model OrganizationDomain {
-  id                  String                    @id @default(cuid())
-  organizationId      String
-  organization        Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  domain              String                    // lowercased, trimmed, IDN-punycoded, no leading dot
-  status              DomainVerificationStatus  @default(PENDING)
-  method              DomainVerificationMethod  @default(ADMIN_EMAIL)
-  defaultRoleName     String                    @default("MEMBER")
-  includeSubdomains   Boolean                   @default(false)
-  challengeTokenHash  String?                   // sha256 hash, never plaintext
-  challengeExpiresAt  DateTime?
-  verifiedAt          DateTime?
-  verifiedByUserId    String?
-  revokedAt           DateTime?
-  revokedByUserId     String?
-  createdByUserId     String?
-  createdAt           DateTime                  @default(now())
-  updatedAt           DateTime                  @updatedAt
+  id                 String                   @id @default(cuid())
+  organizationId     String
+  organization       Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  domain             String // lowercased, trimmed, IDN-punycoded, no leading dot
+  status             DomainVerificationStatus @default(PENDING)
+  method             DomainVerificationMethod @default(ADMIN_EMAIL)
+  defaultRoleName    String                   @default("MEMBER")
+  includeSubdomains  Boolean                  @default(false)
+  challengeTokenHash String? // sha256 hash, never plaintext
+  challengeExpiresAt DateTime?
+  verifiedAt         DateTime?
+  verifiedByUserId   String?
+  revokedAt          DateTime?
+  revokedByUserId    String?
+  createdByUserId    String?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
 
-  events              OrganizationDomainEvent[]
+  events OrganizationDomainEvent[]
 
   @@index([organizationId])
   @@index([domain])
@@ -140,9 +139,9 @@ model OrganizationDomainEvent {
 // Mailbox providers that may NEVER claim a domain (gmail, yahoo, etc.). Seeded from
 // the previous hardcoded GENERIC_EMAIL_DOMAINS set in src/lib/user-organization.ts.
 model GenericEmailDomain {
-  domain    String   @id
-  source    String   // 'seed' | 'admin' | 'imported:disposable-email-list'
-  addedAt   DateTime @default(now())
+  domain  String   @id
+  source  String // 'seed' | 'admin' | 'imported:disposable-email-list'
+  addedAt DateTime @default(now())
 
   @@map("generic_email_domains")
 }
@@ -153,14 +152,12 @@ enum DomainVerificationStatus {
   VERIFIED
   REVOKED
   REJECTED
-
 }
 
 enum DomainVerificationMethod {
-  ADMIN_EMAIL  // v1: claimer must receive mail at @domain.com
-  DNS_TXT      // v2 (deferred)
-  MANUAL       // staff override (audit-logged via OrganizationDomainEvent)
-
+  ADMIN_EMAIL // v1: claimer must receive mail at @domain.com
+  DNS_TXT // v2 (deferred)
+  MANUAL // staff override (audit-logged via OrganizationDomainEvent)
 }
 
 model Membership {
@@ -232,58 +229,58 @@ model RolePermission {
 // ============================================================
 
 model MetrcFacility {
-  id               String   @id @default(cuid())
-  organizationId   String
-  name             String
-  licenseNumber    String
-  stateCode        String   @db.VarChar(2)
-  facilityType     String?  // Cultivator, Manufacturer, Dispensary, etc.
+  id                                   String    @id @default(cuid())
+  organizationId                       String
+  name                                 String
+  licenseNumber                        String
+  stateCode                            String    @db.VarChar(2)
+  facilityType                         String? // Cultivator, Manufacturer, Dispensary, etc.
   // Encrypted Metrc API credentials (production)
-  encryptedVendorApiKey String?
-  encryptedUserApiKey   String?
+  encryptedVendorApiKey                String?
+  encryptedUserApiKey                  String?
   // Encrypted Metrc API credentials (sandbox)
-  encryptedSandboxVendorApiKey String?
-  encryptedSandboxUserApiKey   String?
+  encryptedSandboxVendorApiKey         String?
+  encryptedSandboxUserApiKey           String?
   // Connection state: "mock" | "sandbox" | "production"
-  metrcEnvironment String   @default("mock")
+  metrcEnvironment                     String    @default("mock")
   // Detected Metrc key access level: "full" | "readonly" (null = unknown/not tested)
-  metrcKeyAccess              String?  // production key access level
-  sandboxMetrcKeyAccess       String?  // sandbox key access level
+  metrcKeyAccess                       String? // production key access level
+  sandboxMetrcKeyAccess                String? // sandbox key access level
   // Per-user credential enforcement
-  requirePerUserCredentials Boolean @default(false)
+  requirePerUserCredentials            Boolean   @default(false)
   // Dutchie POS integration
-  dutchieEnvironment                     String?  @default("none")
-  encryptedDutchieLocationKey            String?
-  encryptedDutchieIntegratorKey          String?
-  encryptedDutchieSandboxLocationKey     String?
-  encryptedDutchieSandboxIntegratorKey   String?
-  dutchieFacilityTypes                   String[] @default(["retail"])  // "retail", "cultivation", "manufacturing"
+  dutchieEnvironment                   String?   @default("none")
+  encryptedDutchieLocationKey          String?
+  encryptedDutchieIntegratorKey        String?
+  encryptedDutchieSandboxLocationKey   String?
+  encryptedDutchieSandboxIntegratorKey String?
+  dutchieFacilityTypes                 String[]  @default(["retail"]) // "retail", "cultivation", "manufacturing"
   // Canix ERP integration
-  canixEnvironment              String?  @default("none")  // "none" | "mock" | "sandbox" | "production"
-  encryptedCanixApiKey          String?  // Encrypted production API key
-  encryptedCanixSandboxApiKey   String?  // Encrypted sandbox API key
-  canixFacilityId               String?  // Canix facility ID mapping
-  licenseExpiryDate DateTime? @map("license_expiry_date")
-  isActive         Boolean  @default(true)
-  lastSyncAt       DateTime?
-  lastSyncStatus   String?  // SUCCESS, FAILED, PARTIAL
-  syncErrorMessage String?
+  canixEnvironment                     String?   @default("none") // "none" | "mock" | "sandbox" | "production"
+  encryptedCanixApiKey                 String? // Encrypted production API key
+  encryptedCanixSandboxApiKey          String? // Encrypted sandbox API key
+  canixFacilityId                      String? // Canix facility ID mapping
+  licenseExpiryDate                    DateTime? @map("license_expiry_date")
+  isActive                             Boolean   @default(true)
+  lastSyncAt                           DateTime?
+  lastSyncStatus                       String? // SUCCESS, FAILED, PARTIAL
+  syncErrorMessage                     String?
   // Metadata
-  timezone         String   @default("America/Los_Angeles")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  timezone                             String    @default("America/Los_Angeles")
+  createdAt                            DateTime  @default(now())
+  updatedAt                            DateTime  @updatedAt
 
   // Relations (organizationId is a logical cross-DB reference — no FK, see ADR-008)
-  syncLogs             MetrcSyncLog[]
-  businessRules        BusinessRule[]
-  inventorySnapshots   InventorySnapshot[]
-  complianceAlerts     ComplianceAlert[]
-  actionLogs           ActionLog[]
-  reportTemplates      ReportTemplate[]
-  auditSnapshots       AuditSnapshot[]
-  yieldRecords         YieldRecord[]
-  tollingAgreements    TollingAgreement[]
-  tollingBatches       TollingBatch[]
+  syncLogs              MetrcSyncLog[]
+  businessRules         BusinessRule[]
+  inventorySnapshots    InventorySnapshot[]
+  complianceAlerts      ComplianceAlert[]
+  actionLogs            ActionLog[]
+  reportTemplates       ReportTemplate[]
+  auditSnapshots        AuditSnapshot[]
+  yieldRecords          YieldRecord[]
+  tollingAgreements     TollingAgreement[]
+  tollingBatches        TollingBatch[]
   reconciliationRecords ReconciliationRecord[]
   opexModels            OpExModel[]
   supplyCategories      SupplyCategory[]
@@ -323,28 +320,28 @@ model MetrcFacility {
 }
 
 model MetrcSyncLog {
-  id             String   @id @default(cuid())
-  facilityId     String
-  syncType       String   // FULL, INCREMENTAL, MANUAL
-  status         String   // STARTED, SUCCESS, FAILED, PARTIAL
-  startedAt      DateTime @default(now())
-  completedAt    DateTime?
+  id                String    @id @default(cuid())
+  facilityId        String
+  syncType          String // FULL, INCREMENTAL, MANUAL
+  status            String // STARTED, SUCCESS, FAILED, PARTIAL
+  startedAt         DateTime  @default(now())
+  completedAt       DateTime?
   // Record counts
-  plantsCount    Int?
-  packagesCount  Int?
-  transfersCount Int?
-  salesCount     Int?
+  plantsCount       Int?
+  packagesCount     Int?
+  transfersCount    Int?
+  salesCount        Int?
   // Error tracking
-  errorMessage   String?
-  errorDetails   Json?
+  errorMessage      String?
+  errorDetails      Json?
   // Performance
   durationMs        Int?
   apiCallCount      Int?
   // Phase 1 additions
-  entityType        String?  // 'packages' | 'plants' | 'harvests' | etc.
+  entityType        String? // 'packages' | 'plants' | 'harvests' | etc.
   rowsUpserted      Int?
   rowsStatusChanged Int?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime  @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -358,7 +355,7 @@ model BusinessRule {
   facilityId   String
   name         String
   description  String?
-  category     String   // aging, fifo, compliance, operations, inventory, discount
+  category     String // aging, fifo, compliance, operations, inventory, discount
   isActive     Boolean  @default(true)
   isDefault    Boolean  @default(false)
   severity     String   @default("WARNING") // INFO, WARNING, CRITICAL
@@ -368,12 +365,12 @@ model BusinessRule {
   conditions   Json
   // Action to take when rule triggers
   actionType   String   @default("ALERT") // ALERT, NOTIFICATION, BLOCK, DISCOUNT_RECOMMEND, AUTO_DISCOUNT, PROMO_FLAG, CONSOLIDATE, SAMPLE_OUT
-  actionParams Json?    // Discount action config: { discountRange, suggestedAction, ... }
+  actionParams Json? // Discount action config: { discountRange, suggestedAction, ... }
   metadata     Json?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  facility         MetrcFacility    @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  facility         MetrcFacility     @relation(fields: [facilityId], references: [id], onDelete: Cascade)
   complianceAlerts ComplianceAlert[]
 
   @@index([facilityId, category])
@@ -382,19 +379,19 @@ model BusinessRule {
 }
 
 model InventorySnapshot {
-  id           String   @id @default(cuid())
-  facilityId   String
-  snapshotType String   // DAILY, MANUAL, PRE_AUDIT
+  id                String   @id @default(cuid())
+  facilityId        String
+  snapshotType      String // DAILY, MANUAL, PRE_AUDIT
   // Snapshot data stored as JSON for flexibility
-  packagesData Json     // Array of package summaries
-  plantsData   Json?    // Array of plant summaries
+  packagesData      Json // Array of package summaries
+  plantsData        Json? // Array of plant summaries
   // Aggregate stats
-  totalPackages   Int
-  totalQuantity   Float?
-  totalCategories Int?
+  totalPackages     Int
+  totalQuantity     Float?
+  totalCategories   Int?
   // Aging distribution
   agingDistribution Json? // { "0-30": count, "31-60": count, "61-90": count, "90+": count }
-  createdAt    DateTime @default(now())
+  createdAt         DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -404,33 +401,33 @@ model InventorySnapshot {
 }
 
 model ComplianceAlert {
-  id           String   @id @default(cuid())
-  facilityId   String
-  category     String   // aging, fifo, weight, labeling, transfer, employee, reconciliation, discount
-  severity     String   // INFO, WARNING, CRITICAL
-  title        String
-  description  String
+  id             String    @id @default(cuid())
+  facilityId     String
+  category       String // aging, fifo, weight, labeling, transfer, employee, reconciliation, discount
+  severity       String // INFO, WARNING, CRITICAL
+  title          String
+  description    String
   // References to Metrc entities
-  packageLabel String?
-  plantLabel   String?
-  transferId   String?
-  employeeId   String?
+  packageLabel   String?
+  plantLabel     String?
+  transferId     String?
+  employeeId     String?
   // Alert lifecycle
-  status       String   @default("OPEN") // OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED
-  resolvedAt   DateTime?
-  resolvedBy   String?
+  status         String    @default("OPEN") // OPEN, ACKNOWLEDGED, RESOLVED, DISMISSED
+  resolvedAt     DateTime?
+  resolvedBy     String?
   resolutionNote String?
   // Rule that generated this alert
-  ruleId       String?
+  ruleId         String?
   // Action type from the triggering rule (proper column for querying)
-  actionType   String?  // ALERT, NOTIFICATION, BLOCK, DISCOUNT_RECOMMEND, AUTO_DISCOUNT, PROMO_FLAG, CONSOLIDATE, SAMPLE_OUT
-  actionParams Json?    // Action-specific parameters
-  metadata     Json?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  actionType     String? // ALERT, NOTIFICATION, BLOCK, DISCOUNT_RECOMMEND, AUTO_DISCOUNT, PROMO_FLAG, CONSOLIDATE, SAMPLE_OUT
+  actionParams   Json? // Action-specific parameters
+  metadata       Json?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  rule     BusinessRule?  @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+  rule     BusinessRule? @relation(fields: [ruleId], references: [id], onDelete: SetNull)
 
   // Dedup constraint for createMany+skipDuplicates in rules-evaluation.ts.
   // packageLabel is always non-null for package-scoped rules (the only current source).
@@ -446,34 +443,34 @@ model ComplianceAlert {
 }
 
 model ActionLog {
-  id           String   @id @default(cuid())
-  facilityId   String
-  userId       String
-  actionType   String   // ADJUST, TRANSFER, DESTROY, CREATE_PACKAGE, FINISH, etc.
+  id               String    @id @default(cuid())
+  facilityId       String
+  userId           String
+  actionType       String // ADJUST, TRANSFER, DESTROY, CREATE_PACKAGE, FINISH, etc.
   // Preview -> Confirm -> Execute pipeline
-  status       String   @default("PREVIEWING") // PREVIEWING, CONFIRMED, EXECUTING, COMPLETED, FAILED, ROLLED_BACK
+  status           String    @default("PREVIEWING") // PREVIEWING, CONFIRMED, EXECUTING, COMPLETED, FAILED, ROLLED_BACK
   // Scope
-  targetType   String   // PACKAGE, PLANT, TRANSFER, HARVEST
-  targetIds    String[] // Metrc IDs affected
-  targetCount  Int
+  targetType       String // PACKAGE, PLANT, TRANSFER, HARVEST
+  targetIds        String[] // Metrc IDs affected
+  targetCount      Int
   // State tracking
-  previewData  Json?    // Computed diff shown to user
-  beforeState  Json?    // State before execution
-  afterState   Json?    // State after execution
+  previewData      Json? // Computed diff shown to user
+  beforeState      Json? // State before execution
+  afterState       Json? // State after execution
   // Execution details
-  executedAt   DateTime?
-  errorMessage String?
-  errorDetails Json?
+  executedAt       DateTime?
+  errorMessage     String?
+  errorDetails     Json?
   // Metrc API response
-  metrcResponse Json?
-  metadata     Json?
+  metrcResponse    Json?
+  metadata         Json?
   // Origin — who initiated this action. NULL or 'USER' = direct human action;
   // 'COPILOT' = drafted by Copilot Run for human review-and-submit. When set,
   // `originatingRunId` references the Run that produced the draft.
-  originatedBy String?  @map("originated_by") // 'USER' | 'COPILOT'
-  originatingRunId String? @map("originating_run_id")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  originatedBy     String?   @map("originated_by") // 'USER' | 'COPILOT'
+  originatingRunId String?   @map("originating_run_id")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   // FOR-1489: Restrict (not Cascade) — ActionLog is the cannabis compliance
   // audit trail. MA regs require 3-year retention; we don't want a stray
@@ -489,24 +486,24 @@ model ActionLog {
 }
 
 model ReportTemplate {
-  id           String   @id @default(cuid())
-  facilityId   String
-  name         String
-  description  String?
+  id          String    @id @default(cuid())
+  facilityId  String
+  name        String
+  description String?
   // Report definition
-  reportType   String   // INVENTORY, COMPLIANCE, OPERATIONS, ANALYTICS, CUSTOM
-  columns      Json     // Array of column definitions
-  filters      Json?    // Array of filter conditions
-  groupBy      String[] // Column names to group by
-  sortBy       Json?    // { column: string, direction: "asc" | "desc" }[]
-  chartConfig  Json?    // Chart type and configuration
+  reportType  String // INVENTORY, COMPLIANCE, OPERATIONS, ANALYTICS, CUSTOM
+  columns     Json // Array of column definitions
+  filters     Json? // Array of filter conditions
+  groupBy     String[] // Column names to group by
+  sortBy      Json? // { column: string, direction: "asc" | "desc" }[]
+  chartConfig Json? // Chart type and configuration
   // Template state
-  isDefault    Boolean  @default(false)
-  isShared     Boolean  @default(false)
-  createdBy    String
-  lastRunAt    DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  isDefault   Boolean   @default(false)
+  isShared    Boolean   @default(false)
+  createdBy   String
+  lastRunAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -516,22 +513,22 @@ model ReportTemplate {
 }
 
 model AuditSnapshot {
-  id           String   @id @default(cuid())
-  facilityId   String
-  auditType    String   // PRE_AUDIT, SELF_AUDIT, SCHEDULED
+  id                  String   @id @default(cuid())
+  facilityId          String
+  auditType           String // PRE_AUDIT, SELF_AUDIT, SCHEDULED
   // Scoring
-  overallScore Float    // 0-100
-  categoryScores Json   // { category: score }
+  overallScore        Float // 0-100
+  categoryScores      Json // { category: score }
   // Findings
-  totalFindings  Int
-  criticalCount  Int    @default(0)
-  warningCount   Int    @default(0)
-  infoCount      Int    @default(0)
-  findings       Json   // Array of { category, severity, description, recommendation }
+  totalFindings       Int
+  criticalCount       Int      @default(0)
+  warningCount        Int      @default(0)
+  infoCount           Int      @default(0)
+  findings            Json // Array of { category, severity, description, recommendation }
   // Snapshot reference
   inventorySnapshotId String?
-  metadata     Json?
-  createdAt    DateTime @default(now())
+  metadata            Json?
+  createdAt           DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -540,28 +537,28 @@ model AuditSnapshot {
 }
 
 model YieldRecord {
-  id           String   @id @default(cuid())
-  facilityId   String
+  id              String   @id @default(cuid())
+  facilityId      String
   // Tracking identifiers
-  strainName   String
-  batchId      String?
-  harvestId    String?
+  strainName      String
+  batchId         String?
+  harvestId       String?
   // Stage-by-stage yields
-  stage        String   // VEGETATIVE, FLOWERING, HARVEST, DRYING, CURING, TRIM, EXTRACTION, PACKAGING
-  inputWeight  Float
-  outputWeight Float
-  yieldPercent Float    // (output / input) * 100
-  unitOfMeasure String  @default("grams")
+  stage           String // VEGETATIVE, FLOWERING, HARVEST, DRYING, CURING, TRIM, EXTRACTION, PACKAGING
+  inputWeight     Float
+  outputWeight    Float
+  yieldPercent    Float // (output / input) * 100
+  unitOfMeasure   String   @default("grams")
   // Quality metrics
-  potencyThc   Float?
-  potencyCbd   Float?
+  potencyThc      Float?
+  potencyCbd      Float?
   moistureContent Float?
   // Context
-  notes        String?
-  recordedBy   String?
-  recordedAt   DateTime @default(now())
-  metadata     Json?
-  createdAt    DateTime @default(now())
+  notes           String?
+  recordedBy      String?
+  recordedAt      DateTime @default(now())
+  metadata        Json?
+  createdAt       DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -572,39 +569,39 @@ model YieldRecord {
 }
 
 model TollingAgreement {
-  id             String   @id @default(cuid())
-  facilityId     String
+  id               String    @id @default(cuid())
+  facilityId       String
   // Parties
-  partnerName    String
-  partnerLicense String?
+  partnerName      String
+  partnerLicense   String?
   // Agreement details
-  agreementType  String   // INBOUND (we process for them), OUTBOUND (they process for us)
-  status         String   @default("ACTIVE") // DRAFT, ACTIVE, COMPLETED, CANCELLED
-  startDate      DateTime
-  endDate        DateTime?
+  agreementType    String // INBOUND (we process for them), OUTBOUND (they process for us)
+  status           String    @default("ACTIVE") // DRAFT, ACTIVE, COMPLETED, CANCELLED
+  startDate        DateTime
+  endDate          DateTime?
   // Financial (legacy simple fields kept for backward compat)
-  inputWeight    Float?
-  outputWeight   Float?
-  processingFee  Float?   // Per unit fee (simple mode)
-  totalFees      Float?
-  currency       String   @default("USD")
+  inputWeight      Float?
+  outputWeight     Float?
+  processingFee    Float? // Per unit fee (simple mode)
+  totalFees        Float?
+  currency         String    @default("USD")
   // Advanced fee structure
-  feeStructure   Json?    // Array<{ feeType, label, rate, basis, minFee?, maxFee?, notes? }>
-  yieldGuarantee Float?   // Guaranteed minimum yield percentage
-  qualityStandards Json?  // { thcMin, moistureMax, ... }
+  feeStructure     Json? // Array<{ feeType, label, rate, basis, minFee?, maxFee?, notes? }>
+  yieldGuarantee   Float? // Guaranteed minimum yield percentage
+  qualityStandards Json? // { thcMin, moistureMax, ... }
   // Package tracking
   inputPackageIds  String[]
   outputPackageIds String[]
   // Billing mode
-  billingMode    String   @default("SEPARATE_INVOICE") // SEPARATE_INVOICE | BUILT_INTO_ECONOMICS
+  billingMode      String    @default("SEPARATE_INVOICE") // SEPARATE_INVOICE | BUILT_INTO_ECONOMICS
   // Terms
-  terms          Json?    // { yieldGuarantee, qualityStandards, timeline }
-  notes          String?
-  metadata       Json?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  terms            Json? // { yieldGuarantee, qualityStandards, timeline }
+  notes            String?
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  facility MetrcFacility  @relation(fields: [facilityId], references: [id], onDelete: Cascade)
   batches  TollingBatch[]
 
   @@index([facilityId, status])
@@ -613,36 +610,36 @@ model TollingAgreement {
 }
 
 model TollingBatch {
-  id             String   @id @default(cuid())
-  facilityId     String
-  agreementId    String
-  status         String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, DISPUTED
+  id                String    @id @default(cuid())
+  facilityId        String
+  agreementId       String
+  status            String    @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED, DISPUTED
   // Input tracking
-  inputPackageIds  String[]
-  inputWeight    Float?
+  inputPackageIds   String[]
+  inputWeight       Float?
   // Output tracking
-  outputPackageIds String[]
-  outputWeight   Float?
+  outputPackageIds  String[]
+  outputWeight      Float?
   // Fee calculation (computed on completion)
-  calculatedFees Json?    // Array<{ feeType, label, amount, basis, rate }>
-  totalFees      Float?
+  calculatedFees    Json? // Array<{ feeType, label, amount, basis, rate }>
+  totalFees         Float?
   // Yield tracking
-  expectedYieldPct Float?
-  actualYieldPct   Float?
-  yieldVariance    Float?  // actual - expected
+  expectedYieldPct  Float?
+  actualYieldPct    Float?
+  yieldVariance     Float? // actual - expected
   // Waste
-  wasteWeight    Float?
-  wastePct       Float?
+  wasteWeight       Float?
+  wastePct          Float?
   // Lifecycle tracking
   lifecycleStage    String    @default("INTAKE") // INTAKE | PROCESSING | TESTING | FINISHED | SELLING | COMMENCED
   commencedAt       DateTime?
-  lifecycleSnapshot Json?     // Cached BatchLifecycle snapshot
+  lifecycleSnapshot Json? // Cached BatchLifecycle snapshot
   // Metadata
-  startedAt      DateTime @default(now())
-  completedAt    DateTime?
-  notes          String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  startedAt         DateTime  @default(now())
+  completedAt       DateTime?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   facility  MetrcFacility    @relation(fields: [facilityId], references: [id], onDelete: Cascade)
   agreement TollingAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
@@ -654,29 +651,29 @@ model TollingBatch {
 }
 
 model ReconciliationRecord {
-  id             String   @id @default(cuid())
-  facilityId     String
+  id                 String    @id @default(cuid())
+  facilityId         String
   // Reconciliation scope
   reconciliationType String // INVENTORY, FINANCIAL, TRANSFER, FULL
-  status         String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, FAILED
+  status             String    @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, FAILED
   // Sources
-  sourceA        String   // e.g., "METRC"
-  sourceB        String   // e.g., "POS_SYSTEM", "ERP", "CSV_IMPORT"
+  sourceA            String // e.g., "METRC"
+  sourceB            String // e.g., "POS_SYSTEM", "ERP", "CSV_IMPORT"
   // Results
-  totalRecords   Int?
-  matchedCount   Int?
-  mismatchCount  Int?
-  missingInA     Int?     // Records in B but not A
-  missingInB     Int?     // Records in A but not B
-  discrepancies  Json?    // Array of { field, valueA, valueB, packageLabel }
+  totalRecords       Int?
+  matchedCount       Int?
+  mismatchCount      Int?
+  missingInA         Int? // Records in B but not A
+  missingInB         Int? // Records in A but not B
+  discrepancies      Json? // Array of { field, valueA, valueB, packageLabel }
   // Resolution
-  resolvedCount  Int?     @default(0)
-  resolutionNotes String?
-  completedAt    DateTime?
-  completedBy    String?
-  metadata       Json?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  resolvedCount      Int?      @default(0)
+  resolutionNotes    String?
+  completedAt        DateTime?
+  completedBy        String?
+  metadata           Json?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -691,28 +688,28 @@ model ReconciliationRecord {
 // ============================================================
 
 model OpExModel {
-  id              String   @id @default(cuid())
-  facilityId      String
-  name            String   // "Base Case", "Expansion Plan"
-  description     String?
-  status          String   @default("DRAFT") // DRAFT | ACTIVE | ARCHIVED
-  version         Int      @default(1)
-  isDefault       Boolean  @default(false)
+  id            String    @id @default(cuid())
+  facilityId    String
+  name          String // "Base Case", "Expansion Plan"
+  description   String?
+  status        String    @default("DRAFT") // DRAFT | ACTIVE | ARCHIVED
+  version       Int       @default(1)
+  isDefault     Boolean   @default(false)
   // Cached KPIs — denormalized for list views, recomputed on cell change
-  annualRevenue   Float?
-  annualCost      Float?
-  costPerPound    Float?
-  grossMargin     Float?
-  grossProfit     Float?
-  taxableProfit   Float?
+  annualRevenue Float?
+  annualCost    Float?
+  costPerPound  Float?
+  grossMargin   Float?
+  grossProfit   Float?
+  taxableProfit Float?
   // Template KPI cell keys (populated on creation from template; empty = use defaults)
-  kpiCells        String[]  @default([])
+  kpiCells      String[]  @default([])
   // Import tracking
-  sourceFile      String?  // original .xlsx filename
-  importedAt      DateTime?
-  createdBy       String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  sourceFile    String? // original .xlsx filename
+  importedAt    DateTime?
+  createdBy     String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations
   facility  MetrcFacility  @relation(fields: [facilityId], references: [id], onDelete: Cascade)
@@ -728,18 +725,18 @@ model OpExModel {
 model OpExSection {
   id        String   @id @default(cuid())
   modelId   String
-  name      String   // "Core Assumptions", "Cultivation", "Labor"
-  slug      String   // URL-safe: "core", "labor", "cultivation"
+  name      String // "Core Assumptions", "Cultivation", "Labor"
+  slug      String // URL-safe: "core", "labor", "cultivation"
   sortOrder Int
-  icon      String?  // lucide icon name: "sprout", "users", "zap"
-  parentId  String?  // self-ref for sub-sections
+  icon      String? // lucide icon name: "sprout", "users", "zap"
+  parentId  String? // self-ref for sub-sections
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  model      OpExModel     @relation(fields: [modelId], references: [id], onDelete: Cascade)
-  parent     OpExSection?  @relation("SectionHierarchy", fields: [parentId], references: [id])
-  children   OpExSection[] @relation("SectionHierarchy")
+  model      OpExModel       @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  parent     OpExSection?    @relation("SectionHierarchy", fields: [parentId], references: [id])
+  children   OpExSection[]   @relation("SectionHierarchy")
   cellGroups OpExCellGroup[]
 
   @@unique([modelId, slug])
@@ -750,7 +747,7 @@ model OpExSection {
 model OpExCellGroup {
   id        String   @id @default(cuid())
   sectionId String
-  label     String   // "Yield Assumptions", "Lighting Costs"
+  label     String // "Yield Assumptions", "Lighting Costs"
   sortOrder Int
   createdAt DateTime @default(now())
 
@@ -765,33 +762,33 @@ model OpExCellGroup {
 model OpExCell {
   id          String   @id @default(cuid())
   groupId     String
-  modelId     String   // Denormalized for formula engine lookup
-  key         String   // Unique within model: "core.yield_lbs", "labor.trim_hourly_rate"
-  label       String   // Display: "Annual Yield (lbs)", "Trim Hourly Rate"
-  cellType    String   // INPUT | COMPUTED | CONSTANT
+  modelId     String // Denormalized for formula engine lookup
+  key         String // Unique within model: "core.yield_lbs", "labor.trim_hourly_rate"
+  label       String // Display: "Annual Yield (lbs)", "Trim Hourly Rate"
+  cellType    String // INPUT | COMPUTED | CONSTANT
   dataType    String   @default("number") // number | currency | percent | text
   // Value storage
-  value       Float?   // Current numeric value (null for text cells)
-  textValue   String?  // For text-type cells
+  value       Float? // Current numeric value (null for text cells)
+  textValue   String? // For text-type cells
   // Formula (for COMPUTED cells)
-  formula     String?  // e.g., "core.yield_lbs * core.price_per_lb"
+  formula     String? // e.g., "core.yield_lbs * core.price_per_lb"
   dependsOn   String[] // Auto-generated from formula on write — never set manually
   // Display
   sortOrder   Int
-  unit        String?  // "lbs", "$/hr", "kWh", "%"
+  unit        String? // "lbs", "$/hr", "kWh", "%"
   precision   Int      @default(2) // decimal places
   // Constraints
   minValue    Float?
   maxValue    Float?
   // Metadata
   tooltip     String?
-  sourceSheet String?  // Import provenance only — not updated after import
-  sourceCell  String?  // Original Excel cell ref, e.g., "B12"
+  sourceSheet String? // Import provenance only — not updated after import
+  sourceCell  String? // Original Excel cell ref, e.g., "B12"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Relations
-  group     OpExCellGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  group OpExCellGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([modelId, key])
   @@index([groupId, sortOrder])
@@ -801,12 +798,12 @@ model OpExCell {
 model OpExSnapshot {
   id        String   @id @default(cuid())
   modelId   String
-  name      String?  // "Pre-expansion baseline", "Q1 2026 actual"
+  name      String? // "Pre-expansion baseline", "Q1 2026 actual"
   notes     String?
   // Full cell state at snapshot time
-  cellData  Json     // Record<string, number | string | null> keyed by cell key
+  cellData  Json // Record<string, number | string | null> keyed by cell key
   // KPI values at snapshot time
-  kpis      Json     // { annualRevenue, annualCost, costPerPound, grossMargin, grossProfit, taxableProfit }
+  kpis      Json // { annualRevenue, annualCost, costPerPound, grossMargin, grossProfit, taxableProfit }
   createdBy String
   createdAt DateTime @default(now())
 
@@ -825,8 +822,8 @@ model OpExSnapshot {
 model BriefingSnapshot {
   id         String   @id @default(cuid())
   facilityId String
-  metrics    Json     // { totalPackages, auditScore, fifoViolationCount, avgAgeDays, slowMovingCount, deadStockCount, onHoldCount, weeksOfSupply, insightCount }
-  details    Json     // { fifoViolations: [{newerLabel, olderLabel, category, strain, daysDiff}], criticalAgingLabels: [...] }
+  metrics    Json // { totalPackages, auditScore, fifoViolationCount, avgAgeDays, slowMovingCount, deadStockCount, onHoldCount, weeksOfSupply, insightCount }
+  details    Json // { fifoViolations: [{newerLabel, olderLabel, category, strain, daysDiff}], criticalAgingLabels: [...] }
   createdAt  DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
@@ -840,16 +837,16 @@ model BriefingSnapshot {
 // ============================================================
 
 model SupplyCategory {
-  id        String   @id @default(cuid())
+  id         String   @id @default(cuid())
   facilityId String
-  name      String   // "Packaging", "Labels", "Solvents"
-  parentId  String?  // For hierarchy: Packaging > Bags > Mylar Bags
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  name       String // "Packaging", "Labels", "Solvents"
+  parentId   String? // For hierarchy: Packaging > Bags > Mylar Bags
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  facility MetrcFacility  @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  parent   SupplyCategory? @relation("SupplyCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  facility MetrcFacility    @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  parent   SupplyCategory?  @relation("SupplyCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children SupplyCategory[] @relation("SupplyCategoryTree")
   items    SupplyItem[]
 
@@ -862,24 +859,24 @@ model SupplyItem {
   id           String   @id @default(cuid())
   facilityId   String
   categoryId   String?
-  name         String   // "1oz Mylar Bag - Black"
+  name         String // "1oz Mylar Bag - Black"
   sku          String?
   unit         String   @default("Each") // Each, Roll, Box, Gallon, etc.
   // Materialized aggregate — updated transactionally on every SupplyTransaction insert
   currentStock Float    @default(0)
-  reorderPoint Float?   // Alert when stock drops below
-  reorderQty   Float?   // Suggested reorder quantity
-  unitCost     Float?   // Current unit cost
-  vendor       String?  // Primary vendor name
-  location     String?  // Storage location
+  reorderPoint Float? // Alert when stock drops below
+  reorderQty   Float? // Suggested reorder quantity
+  unitCost     Float? // Current unit cost
+  vendor       String? // Primary vendor name
+  location     String? // Storage location
   isActive     Boolean  @default(true)
   notes        String?
   metadata     Json?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  facility     MetrcFacility     @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  category     SupplyCategory?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  facility     MetrcFacility       @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  category     SupplyCategory?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   transactions SupplyTransaction[]
   bomLines     BillOfMaterial[]
 
@@ -893,12 +890,12 @@ model SupplyTransaction {
   id            String   @id @default(cuid())
   facilityId    String
   itemId        String
-  type          String   // IN, OUT, ADJUST, BOM_DEDUCT
-  quantity      Float    // Positive for IN, negative for OUT/ADJUST/BOM_DEDUCT
-  referenceType String?  // "PURCHASE_ORDER", "PRODUCTION_RUN", "MANUAL", "METRC_PACKAGE"
-  referenceId   String?  // PO number, Metrc package label, etc.
+  type          String // IN, OUT, ADJUST, BOM_DEDUCT
+  quantity      Float // Positive for IN, negative for OUT/ADJUST/BOM_DEDUCT
+  referenceType String? // "PURCHASE_ORDER", "PRODUCTION_RUN", "MANUAL", "METRC_PACKAGE"
+  referenceId   String? // PO number, Metrc package label, etc.
   notes         String?
-  createdBy     String?  // userId
+  createdBy     String? // userId
   createdAt     DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
@@ -913,11 +910,11 @@ model SupplyTransaction {
 model BillOfMaterial {
   id                     String   @id @default(cuid())
   facilityId             String
-  metrcItemName          String   // Metrc item name (denormalized join key to external API)
-  metrcItemCategory      String?  // "Flower", "Edible", etc.
-  componentItemId        String?  // -> SupplyItem (nullable for Metrc-to-Metrc BOMs)
-  componentMetrcItemName String?  // Metrc item name for Metrc-to-Metrc BOMs
-  quantityPerUnit        Float    // How many of this component per unit of Metrc item
+  metrcItemName          String // Metrc item name (denormalized join key to external API)
+  metrcItemCategory      String? // "Flower", "Edible", etc.
+  componentItemId        String? // -> SupplyItem (nullable for Metrc-to-Metrc BOMs)
+  componentMetrcItemName String? // Metrc item name for Metrc-to-Metrc BOMs
+  quantityPerUnit        Float // How many of this component per unit of Metrc item
   unit                   String   @default("Each")
   notes                  String?
   isAutoInferred         Boolean  @default(false)
@@ -938,63 +935,63 @@ model BillOfMaterial {
 // ============================================================
 
 model AutoDiscountConfig {
-  id                   String   @id @default(cuid())
-  facilityId           String   @unique
-  isEnabled            Boolean  @default(false)
+  id                     String    @id @default(cuid())
+  facilityId             String    @unique
+  isEnabled              Boolean   @default(false)
   // Guard rails
-  maxDiscountPct       Float    @default(50)
-  minPriceFloor        Float?   // Absolute minimum price (dollars)
-  minScoreThreshold    Int      @default(30) // Only discount packages scoring >= this
-  priorityFilter       String[] @default(["urgent", "high"]) // Which priority levels to auto-discount
+  maxDiscountPct         Float     @default(50)
+  minPriceFloor          Float? // Absolute minimum price (dollars)
+  minScoreThreshold      Int       @default(30) // Only discount packages scoring >= this
+  priorityFilter         String[]  @default(["urgent", "high"]) // Which priority levels to auto-discount
   // Discount tiers: JSON array of { ageDays: number, discountPct: number }
-  discountTiers        Json     @default("[{\"ageDays\":60,\"discountPct\":10},{\"ageDays\":90,\"discountPct\":20},{\"ageDays\":120,\"discountPct\":30}]")
+  discountTiers          Json      @default("[{\"ageDays\":60,\"discountPct\":10},{\"ageDays\":90,\"discountPct\":20},{\"ageDays\":120,\"discountPct\":30}]")
   // Exclusions
-  excludedProductIds   String[] @default([])
-  excludedCategories   String[] @default([])
+  excludedProductIds     String[]  @default([])
+  excludedCategories     String[]  @default([])
   // Per-category max discount overrides: { "Buds": 20, "Concentrate": 15 }
   categoryMaxDiscountPct Json?
   // Velocity integration
-  useVelocityData      Boolean  @default(false)
-  velocityLookbackDays Int      @default(30)
+  useVelocityData        Boolean   @default(false)
+  velocityLookbackDays   Int       @default(30)
   // Approval mode
-  requireApproval      Boolean  @default(true)
+  requireApproval        Boolean   @default(true)
   // Run tracking
-  lastRunAt            DateTime?
-  lastRunStatus        String?  // COMPLETED, FAILED, SKIPPED
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  lastRunAt              DateTime?
+  lastRunStatus          String? // COMPLETED, FAILED, SKIPPED
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
-  facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  facility MetrcFacility     @relation(fields: [facilityId], references: [id], onDelete: Cascade)
   runs     AutoDiscountRun[]
 
   @@map("auto_discount_configs")
 }
 
 model AutoDiscountRun {
-  id                    String   @id @default(cuid())
-  facilityId            String
-  configId              String
-  trigger               String   // "cron" | "manual"
-  status                String   @default("PENDING") // PENDING, PREVIEWING, APPROVED, EXECUTING, COMPLETED, FAILED, SKIPPED
+  id                     String    @id @default(cuid())
+  facilityId             String
+  configId               String
+  trigger                String // "cron" | "manual"
+  status                 String    @default("PENDING") // PENDING, PREVIEWING, APPROVED, EXECUTING, COMPLETED, FAILED, SKIPPED
   // Counts
-  recommendationCount   Int      @default(0)
-  overrideCount         Int      @default(0)
-  succeededCount        Int      @default(0)
-  failedCount           Int      @default(0)
+  recommendationCount    Int       @default(0)
+  overrideCount          Int       @default(0)
+  succeededCount         Int       @default(0)
+  failedCount            Int       @default(0)
   // Financials
   estimatedRevenueImpact Float?
   // Plan data: JSON array of { packageLabel, productId, productName, oldPrice, newPrice, discountPct, score, ageDays, category }
-  planData              Json?
-  resultData            Json?    // Execution results (succeeded/failed product IDs)
+  planData               Json?
+  resultData             Json? // Execution results (succeeded/failed product IDs)
   // Audit
-  actionLogId           String?
-  errorMessage          String?
+  actionLogId            String?
+  errorMessage           String?
   // Timestamps
-  startedAt             DateTime @default(now())
-  completedAt           DateTime?
-  createdAt             DateTime @default(now())
+  startedAt              DateTime  @default(now())
+  completedAt            DateTime?
+  createdAt              DateTime  @default(now())
 
-  facility MetrcFacility    @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  facility MetrcFacility      @relation(fields: [facilityId], references: [id], onDelete: Cascade)
   config   AutoDiscountConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
 
   @@index([facilityId, createdAt])
@@ -1008,17 +1005,17 @@ model AutoDiscountRun {
 // ============================================================
 
 model DispositionPolicy {
-  id              String   @id @default(cuid())
-  facilityId      String   @unique
-  isEnabled       Boolean  @default(true)
+  id                  String   @id @default(cuid())
+  facilityId          String   @unique
+  isEnabled           Boolean  @default(true)
   // Per-category monthly limits: { "sample": { units: 100, value: 5000 }, "vendor_day": ... }
-  categoryLimits  Json     @default("{}")
+  categoryLimits      Json     @default("{}")
   // Global settings
-  allowBudgetOverride Boolean @default(false) // Allow dispositions that exceed budget limits
-  requireNote     Boolean  @default(true)  // Require a note on every disposition
-  alertThreshold  Float    @default(0.85)  // Alert when budget hits this fraction (85%)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  allowBudgetOverride Boolean  @default(false) // Allow dispositions that exceed budget limits
+  requireNote         Boolean  @default(true) // Require a note on every disposition
+  alertThreshold      Float    @default(0.85) // Alert when budget hits this fraction (85%)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1026,24 +1023,24 @@ model DispositionPolicy {
 }
 
 model DispositionRecord {
-  id              String   @id @default(cuid())
-  facilityId      String
-  packageLabel    String
-  category        String   // sample, vendor_day, promo, damage, waste
-  quantity        Float
-  unitOfMeasure   String
-  estimatedValue  Float    @default(0)
+  id                    String   @id @default(cuid())
+  facilityId            String
+  packageLabel          String
+  category              String // sample, vendor_day, promo, damage, waste
+  quantity              Float
+  unitOfMeasure         String
+  estimatedValue        Float    @default(0)
   // Context
-  recipientName   String?  // Buyer name for samples, event for vendor days
-  note            String?
+  recipientName         String? // Buyer name for samples, event for vendor days
+  note                  String?
   // Metrc tracking
   metrcAdjustmentReason String?
-  actionLogId     String?
+  actionLogId           String?
   // Lifecycle
-  status          String   @default("COMPLETED") // COMPLETED, REVERSED
-  createdBy       String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  status                String   @default("COMPLETED") // COMPLETED, REVERSED
+  createdBy             String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1059,18 +1056,18 @@ model DispositionRecord {
 // ============================================================
 
 model Employee {
-  id           String   @id @default(cuid())
-  facilityId   String
-  name         String
-  role         String?
-  hourlyRate   Float
-  isActive     Boolean  @default(true)
-  notes        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id         String   @id @default(cuid())
+  facilityId String
+  name       String
+  role       String?
+  hourlyRate Float
+  isActive   Boolean  @default(true)
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  facility     MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  workLogs     WorkLog[]
+  facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  workLogs WorkLog[]
 
   @@index([facilityId, isActive])
   @@index([facilityId, name])
@@ -1099,8 +1096,8 @@ model WorkLog {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  facility       MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  employee       Employee?     @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  employee Employee?     @relation(fields: [employeeId], references: [id], onDelete: SetNull)
 
   @@index([facilityId, workDate])
   @@index([facilityId, skuName])
@@ -1117,15 +1114,14 @@ enum FacilityRole {
   VIEWER
   OPERATOR
   ADMIN
-
 }
 
 model FacilityAccess {
   id         String       @id @default(cuid())
   facilityId String
-  userId     String       // Logical ref to User (dashboard DB) — no cross-DB FK possible
+  userId     String // Logical ref to User (dashboard DB) — no cross-DB FK possible
   role       FacilityRole @default(VIEWER)
-  grantedBy  String?      // userId of granting admin — soft ref, no FK
+  grantedBy  String? // userId of granting admin — soft ref, no FK
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
 
@@ -1147,7 +1143,7 @@ model FacilityUserCredential {
   userId                     String
   encryptedUserApiKey        String
   encryptedSandboxUserApiKey String?
-  metrcUsername               String?
+  metrcUsername              String?
   isActive                   Boolean   @default(true)
   lastVerifiedAt             DateTime?
   createdAt                  DateTime  @default(now())
@@ -1166,38 +1162,38 @@ model FacilityUserCredential {
 // ============================================================
 
 model COARecord {
-  id           String   @id @default(cuid())
-  facilityId   String
+  id                String    @id @default(cuid())
+  facilityId        String
   // Link to Metrc package
-  packageLabel String?
-  packageId    Int?     // Metrc package ID
+  packageLabel      String?
+  packageId         Int? // Metrc package ID
   // PDF storage
-  fileName     String
-  fileSize     Int      // bytes
+  fileName          String
+  fileSize          Int // bytes
   // Parsed data (JSON for flexibility)
-  terpenes     Json?    // TerpeneResult[]
-  cannabinoids Json?    // CannabinoidResult[]
-  labInfo      Json?    // LabInfo
-  batchInfo    Json?    // BatchInfo
+  terpenes          Json? // TerpeneResult[]
+  cannabinoids      Json? // CannabinoidResult[]
+  labInfo           Json? // LabInfo
+  batchInfo         Json? // BatchInfo
   totalTerpenes     Float?
   totalCannabinoids Float?
   // Parsing metadata
-  parseTier    String   // 'regex' | 'llm-vision'
-  parseConfidence Float  // 0.0-1.0
-  parseWarnings  String[] @default([])
+  parseTier         String // 'regex' | 'llm-vision'
+  parseConfidence   Float // 0.0-1.0
+  parseWarnings     String[]  @default([])
   // Status
-  status       String   @default("PARSED") // PARSED, CONFIRMED, REJECTED
-  confirmedBy  String?  // userId who confirmed
-  confirmedAt  DateTime?
+  status            String    @default("PARSED") // PARSED, CONFIRMED, REJECTED
+  confirmedBy       String? // userId who confirmed
+  confirmedAt       DateTime?
   // Expiration tracking (FOR-970)
-  testDate     DateTime?
-  expirationDate DateTime?
-  isExpired    Boolean  @default(false)
+  testDate          DateTime?
+  expirationDate    DateTime?
+  isExpired         Boolean   @default(false)
   // Metadata
-  metadata     Json?
-  createdBy    String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  metadata          Json?
+  createdBy         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1252,39 +1248,39 @@ model PipelineStatus {
 // ============================================================
 
 model TransferSnapshot {
-  id                  String   @id @default(cuid())
-  facilityId          String
-  metrcTransferId     Int      // Metrc's transfer ID — natural key for upsert
-  direction           String   // 'incoming' | 'outgoing' | 'rejected'
-  manifestNumber      String
-  shipperFacilityLicenseNumber  String
-  shipperFacilityName           String
-  receiverFacilityLicenseNumber String?
-  receiverFacilityName          String?
+  id                               String    @id @default(cuid())
+  facilityId                       String
+  metrcTransferId                  Int // Metrc's transfer ID — natural key for upsert
+  direction                        String // 'incoming' | 'outgoing' | 'rejected'
+  manifestNumber                   String
+  shipperFacilityLicenseNumber     String
+  shipperFacilityName              String
+  receiverFacilityLicenseNumber    String?
+  receiverFacilityName             String?
   transporterFacilityLicenseNumber String?
   transporterFacilityName          String?
-  deliveryCount       Int
-  receivedDeliveryCount Int
-  packageCount        Int
-  receivedPackageCount Int
-  containsDonation    Boolean  @default(false)
-  containsTradeSample Boolean  @default(false)
-  containsTestingSample Boolean @default(false)
-  estimatedDepartureDateTime String
-  estimatedArrivalDateTime   String
-  receivedDateTime    String?
-  createdDateTime     String
-  lastModified        String
-  lastSeenAt          DateTime @default(now()) // When we last saw this transfer in the API
-  firstSeenAt         DateTime @default(now()) // When we first captured this transfer
-  isActive            Boolean  @default(true)  // false = no longer in Metrc API (completed/accepted)
+  deliveryCount                    Int
+  receivedDeliveryCount            Int
+  packageCount                     Int
+  receivedPackageCount             Int
+  containsDonation                 Boolean   @default(false)
+  containsTradeSample              Boolean   @default(false)
+  containsTestingSample            Boolean   @default(false)
+  estimatedDepartureDateTime       String
+  estimatedArrivalDateTime         String
+  receivedDateTime                 String?
+  createdDateTime                  String
+  lastModified                     String
+  lastSeenAt                       DateTime  @default(now()) // When we last saw this transfer in the API
+  firstSeenAt                      DateTime  @default(now()) // When we first captured this transfer
+  isActive                         Boolean   @default(true) // false = no longer in Metrc API (completed/accepted)
   // Phase 3 additions — typed columns promoted from rawPayload / sync metadata
-  metrcLastModified   DateTime?
-  rawPayload          Json?
-  lastSyncedAt        DateTime @default(now())
+  metrcLastModified                DateTime?
+  rawPayload                       Json?
+  lastSyncedAt                     DateTime  @default(now())
 
-  facility       MetrcFacility             @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  deliveries     TransferDeliveryRecord[]
+  facility   MetrcFacility            @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  deliveries TransferDeliveryRecord[]
 
   @@unique([facilityId, metrcTransferId, direction])
   @@index([facilityId, direction, isActive])
@@ -1298,30 +1294,30 @@ model TransferSnapshot {
 /// Only re-walked from Metrc when the parent transfer's LastModified changes.
 /// Frozen (never re-walked) once `isCompleted = true` (receivedDateTime set).
 model TransferDeliveryRecord {
-  id                        String    @id @default(cuid())
-  transferSnapshotId        String
-  metrcDeliveryId           Int
+  id                             String   @id @default(cuid())
+  transferSnapshotId             String
+  metrcDeliveryId                Int
   recipientFacilityLicenseNumber String
-  recipientFacilityName     String
-  shipmentTypeName          String?
-  shipmentTransactionType   String?
-  estimatedDepartureDateTime String?
-  estimatedArrivalDateTime  String?
-  actualDepartureDateTime   String?
-  actualArrivalDateTime     String?
-  receivedDateTime          String?
-  receivedByName            String?
-  grossWeight               Decimal? @db.Decimal(12, 4)
-  grossUnitOfWeightName     String?
-  plannedRoute              String?
-  totalPackages             Int       @default(0)
-  totalPrice                Decimal?  @db.Decimal(14, 2)
-  isCompleted               Boolean   @default(false) // true when receivedDateTime set — frozen
-  rawPayload                Json?
-  lastSyncedAt              DateTime  @default(now())
-  capturedAt                DateTime  @default(now())
+  recipientFacilityName          String
+  shipmentTypeName               String?
+  shipmentTransactionType        String?
+  estimatedDepartureDateTime     String?
+  estimatedArrivalDateTime       String?
+  actualDepartureDateTime        String?
+  actualArrivalDateTime          String?
+  receivedDateTime               String?
+  receivedByName                 String?
+  grossWeight                    Decimal? @db.Decimal(12, 4)
+  grossUnitOfWeightName          String?
+  plannedRoute                   String?
+  totalPackages                  Int      @default(0)
+  totalPrice                     Decimal? @db.Decimal(14, 2)
+  isCompleted                    Boolean  @default(false) // true when receivedDateTime set — frozen
+  rawPayload                     Json?
+  lastSyncedAt                   DateTime @default(now())
+  capturedAt                     DateTime @default(now())
 
-  transfer TransferSnapshot           @relation(fields: [transferSnapshotId], references: [id], onDelete: Cascade)
+  transfer TransferSnapshot        @relation(fields: [transferSnapshotId], references: [id], onDelete: Cascade)
   packages TransferPackageRecord[]
 
   @@unique([transferSnapshotId, metrcDeliveryId])
@@ -1364,20 +1360,20 @@ model TransferPackageRecord {
 /// Catalog: Item master list snapshot (Phase 3).
 /// Populated by catalog-sync.ts, daily cadence.
 model ItemSnapshot {
-  id                       String    @id @default(cuid())
-  facilityId               String
-  metrcItemId              Int
-  name                     String
-  productCategoryName      String?
-  productCategoryType      String?
-  quantityType             String?
-  defaultLabTestingState   String?
-  unitOfMeasureName        String?
-  strainName               String?
-  isActive                 Boolean   @default(true)
-  rawPayload               Json?
-  lastSyncedAt             DateTime  @default(now())
-  capturedAt               DateTime  @default(now())
+  id                     String   @id @default(cuid())
+  facilityId             String
+  metrcItemId            Int
+  name                   String
+  productCategoryName    String?
+  productCategoryType    String?
+  quantityType           String?
+  defaultLabTestingState String?
+  unitOfMeasureName      String?
+  strainName             String?
+  isActive               Boolean  @default(true)
+  rawPayload             Json?
+  lastSyncedAt           DateTime @default(now())
+  capturedAt             DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1390,16 +1386,16 @@ model ItemSnapshot {
 /// Catalog: Location master list snapshot (Phase 3).
 /// Populated by catalog-sync.ts, daily cadence.
 model LocationSnapshot {
-  id                 String    @id @default(cuid())
-  facilityId         String
-  metrcLocationId    Int
-  name               String
-  locationTypeId     Int?
-  locationTypeName   String?
-  isActive           Boolean   @default(true)
-  rawPayload         Json?
-  lastSyncedAt       DateTime  @default(now())
-  capturedAt         DateTime  @default(now())
+  id               String   @id @default(cuid())
+  facilityId       String
+  metrcLocationId  Int
+  name             String
+  locationTypeId   Int?
+  locationTypeName String?
+  isActive         Boolean  @default(true)
+  rawPayload       Json?
+  lastSyncedAt     DateTime @default(now())
+  capturedAt       DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1411,19 +1407,19 @@ model LocationSnapshot {
 /// Catalog: Strain master list snapshot (Phase 3).
 /// Populated by catalog-sync.ts, daily cadence.
 model StrainSnapshot {
-  id                String    @id @default(cuid())
-  facilityId        String
-  metrcStrainId     Int
-  name              String
-  testingStatus     String?
-  thcLevel          Decimal?  @db.Decimal(6, 3)
-  cbdLevel          Decimal?  @db.Decimal(6, 3)
-  indicaPercentage  Decimal?  @db.Decimal(6, 2)
-  sativaPercentage  Decimal?  @db.Decimal(6, 2)
-  isActive          Boolean   @default(true)
-  rawPayload        Json?
-  lastSyncedAt      DateTime  @default(now())
-  capturedAt        DateTime  @default(now())
+  id               String   @id @default(cuid())
+  facilityId       String
+  metrcStrainId    Int
+  name             String
+  testingStatus    String?
+  thcLevel         Decimal? @db.Decimal(6, 3)
+  cbdLevel         Decimal? @db.Decimal(6, 3)
+  indicaPercentage Decimal? @db.Decimal(6, 2)
+  sativaPercentage Decimal? @db.Decimal(6, 2)
+  isActive         Boolean  @default(true)
+  rawPayload       Json?
+  lastSyncedAt     DateTime @default(now())
+  capturedAt       DateTime @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1438,43 +1434,43 @@ model StrainSnapshot {
 // ============================================================
 
 model TransferLineItem {
-  id                  String   @id @default(cuid())
-  facilityId          String
-  manifestNumber      String
-  originLicenseNumber String
-  originFacilityName  String
-  originFacilityType  String?
-  destLicenseNumber   String
-  destFacilityName    String
-  destFacilityType    String?
-  transferType        String   // 'affiliated' | 'wholesale'
-  createdDateTime     String?
-  receivedDateTime    String?
-  isVoided            Boolean  @default(false)
+  id                     String   @id @default(cuid())
+  facilityId             String
+  manifestNumber         String
+  originLicenseNumber    String
+  originFacilityName     String
+  originFacilityType     String?
+  destLicenseNumber      String
+  destFacilityName       String
+  destFacilityType       String?
+  transferType           String // 'affiliated' | 'wholesale'
+  createdDateTime        String?
+  receivedDateTime       String?
+  isVoided               Boolean  @default(false)
   // Package details
-  packageLabel        String?  // Only in affiliated CSV
-  itemName            String
-  itemCategory        String
+  packageLabel           String? // Only in affiliated CSV
+  itemName               String
+  itemCategory           String
   // Shipped
-  shippedQuantity     Float?
-  shippedUnitOfMeasure String?
-  shippedWeight       Float?
-  shippedWeightUoM    String?
+  shippedQuantity        Float?
+  shippedUnitOfMeasure   String?
+  shippedWeight          Float?
+  shippedWeightUoM       String?
   // Received
-  receivedQuantity    Float?
-  receivedUnitOfMeasure String?
-  receivedWeight      Float?
-  receivedWeightUoM   String?
+  receivedQuantity       Float?
+  receivedUnitOfMeasure  String?
+  receivedWeight         Float?
+  receivedWeightUoM      String?
   // Variance
-  countVariancePct    Float?
-  weightVariancePct   Float?
+  countVariancePct       Float?
+  weightVariancePct      Float?
   // Wholesale pricing (from wholesale CSV or API)
   shipperWholesalePrice  Float?
   receiverWholesalePrice Float?
   // Import metadata
-  importSource        String   // 'csv_affiliated' | 'csv_wholesale' | 'api'
-  importedAt          DateTime @default(now())
-  importBatchId       String
+  importSource           String // 'csv_affiliated' | 'csv_wholesale' | 'api'
+  importedAt             DateTime @default(now())
+  importBatchId          String
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1506,12 +1502,12 @@ model TransferLineItem {
 model OperatorBenchmark {
   id         String   @id @default(cuid())
   facilityId String
-  category   String   // "aging" | "yield" | "freshness" | "compliance" | "cost" | "alert"
-  key        String   // Metric identifier within the category
-  value      Float    // Numeric threshold, target, or benchmark
-  unit       String?  // Optional unit label ("days", "%", "lbs", "$")
-  label      String?  // Optional human-readable label for UI display
-  notes      String?  // Operator notes on why this benchmark was set
+  category   String // "aging" | "yield" | "freshness" | "compliance" | "cost" | "alert"
+  key        String // Metric identifier within the category
+  value      Float // Numeric threshold, target, or benchmark
+  unit       String? // Optional unit label ("days", "%", "lbs", "$")
+  label      String? // Optional human-readable label for UI display
+  notes      String? // Operator notes on why this benchmark was set
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -1526,22 +1522,22 @@ model OperatorBenchmark {
 /// Initial load via CSV import, then incremental sync via nightly cron.
 /// Active receipts are always live from Metrc API; inactive reads from here.
 model RetailSale {
-  id              String   @id @default(cuid())
-  facilityId      String
-  receiptId       Int      // Metrc receipt ID
-  receiptNumber   String
-  packageLabel    String
-  productName     String
-  productCategory String?
-  customerType    String?  // Consumer, Patient, Caregiver
-  quantity        Decimal  @db.Decimal(12, 4)
-  unitPrice       Decimal? @db.Decimal(12, 4)
-  totalPrice      Decimal  @db.Decimal(12, 4)
-  unitOfMeasure   String?
-  soldAt          DateTime
-  capturedAt      DateTime @default(now())
-  rawPayload      Json?
-  finalized       Boolean  @default(false)
+  id                 String   @id @default(cuid())
+  facilityId         String
+  receiptId          Int // Metrc receipt ID
+  receiptNumber      String
+  packageLabel       String
+  productName        String
+  productCategory    String?
+  customerType       String? // Consumer, Patient, Caregiver
+  quantity           Decimal  @db.Decimal(12, 4)
+  unitPrice          Decimal? @db.Decimal(12, 4)
+  totalPrice         Decimal  @db.Decimal(12, 4)
+  unitOfMeasure      String?
+  soldAt             DateTime
+  capturedAt         DateTime @default(now())
+  rawPayload         Json?
+  finalized          Boolean  @default(false)
   sourcePackageLabel String?
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
@@ -1582,35 +1578,35 @@ model RetailSaleReceipt {
 /// Eliminates the 111-API-call cost per page load (2,210 packages / 20 per page).
 /// Pages read from this table; cron refreshes nightly + on-demand via refresh button.
 model PackageSnapshot {
-  id                String    @id @default(cuid())
-  facilityId        String
-  metrcPackageId    Int       // Metrc package ID
-  packageLabel      String
-  packageType       String?
-  itemId            Int?
-  itemName          String
-  itemCategory      String?
-  quantity          Decimal   @db.Decimal(12, 4)
-  unitOfMeasure     String?
-  locationName      String?
-  packagedDate      DateTime?
-  productCategory   String?
-  itemStrainName    String?
-  isFinished        Boolean   @default(false)
-  isActive          Boolean   @default(true) // false = no longer in Metrc API (sold/transferred)
+  id                 String    @id @default(cuid())
+  facilityId         String
+  metrcPackageId     Int // Metrc package ID
+  packageLabel       String
+  packageType        String?
+  itemId             Int?
+  itemName           String
+  itemCategory       String?
+  quantity           Decimal   @db.Decimal(12, 4)
+  unitOfMeasure      String?
+  locationName       String?
+  packagedDate       DateTime?
+  productCategory    String?
+  itemStrainName     String?
+  isFinished         Boolean   @default(false)
+  isActive           Boolean   @default(true) // false = no longer in Metrc API (sold/transferred)
   // Persisted so engines' `if (pkg.FinishedDate || pkg.ArchivedDate) continue`
   // guard actually fires. Metrc's "active" list still includes packages with
   // these set, so we filter them out at the read layer.
-  finishedDate      DateTime?
-  archivedDate      DateTime?
+  finishedDate       DateTime?
+  archivedDate       DateTime?
   // Phase 1 additions
-  metrcLastModified DateTime? // Metrc's LastModified timestamp — enables per-row staleness checks
-  labTestingState   String?   // Promoted from rawPayload: TestPassed, TestFailed, NotSubmitted, SubmittedForTesting
-  isOnHold          Boolean   @default(false) // Promoted from rawPayload for compliance queries
-  sourceHarvestNames String?  // Promoted from rawPayload for frequently joined harvest lookups
-  rawPayload        Json?
-  lastSyncedAt      DateTime  @default(now())
-  capturedAt        DateTime  @default(now())
+  metrcLastModified  DateTime? // Metrc's LastModified timestamp — enables per-row staleness checks
+  labTestingState    String? // Promoted from rawPayload: TestPassed, TestFailed, NotSubmitted, SubmittedForTesting
+  isOnHold           Boolean   @default(false) // Promoted from rawPayload for compliance queries
+  sourceHarvestNames String? // Promoted from rawPayload for frequently joined harvest lookups
+  rawPayload         Json?
+  lastSyncedAt       DateTime  @default(now())
+  capturedAt         DateTime  @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1630,11 +1626,11 @@ model PackageSnapshot {
 model SyncWatermark {
   id            String    @id @default(cuid())
   facilityId    String
-  endpoint      String    // 'sales.receipts.inactive' | 'packages.inactive' | ...
-  entityState   String?   // Per-status-variant watermarks: 'active' | 'inactive' | null
-  watermark     String?   // ISO timestamp — max LastModified from last successful run
+  endpoint      String // 'sales.receipts.inactive' | 'packages.inactive' | ...
+  entityState   String? // Per-status-variant watermarks: 'active' | 'inactive' | null
+  watermark     String? // ISO timestamp — max LastModified from last successful run
   lastRunAt     DateTime?
-  lastRunStatus String?   // 'success' | 'partial' | 'failed' | 'skipped'
+  lastRunStatus String? // 'success' | 'partial' | 'failed' | 'skipped'
   lastError     String?
   lockedAt      DateTime?
   lockedBy      String?
@@ -1665,28 +1661,28 @@ model ApiCallBudget {
 /// Plant snapshot — synced from Metrc /plants/v2/vegetative and /plants/v2/flowering.
 /// Phase 2: replaces live getActivePlants() calls in plants.ts, analytics.ts routers.
 model PlantSnapshot {
-  id                String    @id @default(cuid())
-  facilityId        String
-  metrcPlantId      Int       // Metrc plant ID
-  label             String
-  state             String?   // Vegetative, Flowering, Harvested, Destroyed, etc.
-  growthPhase       String?   // Vegetative, Flowering
-  plantBatchName    String?
+  id                 String    @id @default(cuid())
+  facilityId         String
+  metrcPlantId       Int // Metrc plant ID
+  label              String
+  state              String? // Vegetative, Flowering, Harvested, Destroyed, etc.
+  growthPhase        String? // Vegetative, Flowering
+  plantBatchName     String?
   plantBatchTypeName String?
-  strainName        String?
-  locationName      String?
-  roomName          String?
-  isOnHold          Boolean   @default(false)
-  plantedDate       DateTime?
-  vegetativeDate    DateTime?
-  floweringDate     DateTime?
-  harvestedDate     DateTime?
-  destroyedDate     DateTime?
-  metrcLastModified DateTime?
-  isActive          Boolean   @default(true) // false = harvested/destroyed
-  rawPayload        Json?
-  lastSyncedAt      DateTime  @default(now())
-  capturedAt        DateTime  @default(now())
+  strainName         String?
+  locationName       String?
+  roomName           String?
+  isOnHold           Boolean   @default(false)
+  plantedDate        DateTime?
+  vegetativeDate     DateTime?
+  floweringDate      DateTime?
+  harvestedDate      DateTime?
+  destroyedDate      DateTime?
+  metrcLastModified  DateTime?
+  isActive           Boolean   @default(true) // false = harvested/destroyed
+  rawPayload         Json?
+  lastSyncedAt       DateTime  @default(now())
+  capturedAt         DateTime  @default(now())
 
   facility MetrcFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
 
@@ -1701,9 +1697,9 @@ model PlantSnapshot {
 model PlantBatchSnapshot {
   id                String    @id @default(cuid())
   facilityId        String
-  metrcBatchId      Int       // Metrc plant batch ID
+  metrcBatchId      Int // Metrc plant batch ID
   name              String
-  type              String?   // Seed, Clone
+  type              String? // Seed, Clone
   strainName        String?
   locationName      String?
   roomName          String?
@@ -1733,16 +1729,16 @@ model PlantBatchSnapshot {
 model HarvestSnapshot {
   id                  String    @id @default(cuid())
   facilityId          String
-  metrcHarvestId      Int       // Metrc harvest ID
+  metrcHarvestId      Int // Metrc harvest ID
   name                String
   harvestType         String?
   sourceStrainNames   String?
   dryingLocationName  String?
-  currentWeight       Decimal   @db.Decimal(12, 4) @default(0)
-  totalWasteWeight    Decimal   @db.Decimal(12, 4) @default(0)
-  totalRestoredWeight Decimal   @db.Decimal(12, 4) @default(0)
+  currentWeight       Decimal   @default(0) @db.Decimal(12, 4)
+  totalWasteWeight    Decimal   @default(0) @db.Decimal(12, 4)
+  totalRestoredWeight Decimal   @default(0) @db.Decimal(12, 4)
   packageCount        Int       @default(0)
-  totalPackagedWeight Decimal   @db.Decimal(12, 4) @default(0)
+  totalPackagedWeight Decimal   @default(0) @db.Decimal(12, 4)
   unitOfWeightName    String?
   labTestingState     String?
   isOnHold            Boolean   @default(false)
@@ -1774,15 +1770,15 @@ model HarvestSnapshot {
 /// capture — the current `@metrc-manager-3000/client` package does not surface response
 /// headers on success, so they remain null today.
 model MetrcApiCall {
-  id              String   @id @default(cuid())
-  facilityId      String
-  endpoint        String   // IMetrcClient method name, e.g. "getActivePackages"
-  statusCode      Int?
-  durationMs      Int
-  ts              DateTime @default(now())
-  remainingQuota  Int?
-  requestId       String?
-  error           String?
+  id             String   @id @default(cuid())
+  facilityId     String
+  endpoint       String // IMetrcClient method name, e.g. "getActivePackages"
+  statusCode     Int?
+  durationMs     Int
+  ts             DateTime @default(now())
+  remainingQuota Int?
+  requestId      String?
+  error          String?
 
   @@index([facilityId, ts(sort: Desc)])
   @@index([facilityId, endpoint, ts(sort: Desc)])
@@ -1795,7 +1791,7 @@ model MetrcApiCall {
 model LabTestSnapshot {
   id                String    @id @default(cuid())
   facilityId        String
-  packageId         Int       // Metrc package ID this test belongs to
+  packageId         Int // Metrc package ID this test belongs to
   packageLabel      String
   testPerformedDate DateTime?
   overallPassed     Boolean
@@ -1828,37 +1824,37 @@ model LabTestSnapshot {
 // ============================================================
 
 model Run {
-  id             String   @id @default(cuid())
-  organizationId String   @map("organization_id")
+  id                String    @id @default(cuid())
+  organizationId    String    @map("organization_id")
   // Logical reference to MetrcFacility — null for org-mode runs (cross-facility analytics).
-  facilityId     String?  @map("facility_id")
-  userId         String   @map("user_id")
+  facilityId        String?   @map("facility_id")
+  userId            String    @map("user_id")
   // skillId is a logical reference to COPILOT_SKILLS[].id. Null for free-form prompts.
-  skillId        String?  @map("skill_id")
+  skillId           String?   @map("skill_id")
   // 'pending' | 'running' | 'awaiting_user' | 'completed' | 'failed' | 'scheduled'
-  status         String   @default("pending")
+  status            String    @default("pending")
   // The user message that started the run (for display + replay)
-  prompt         String   @db.Text
-  model          String?
+  prompt            String    @db.Text
+  model             String?
   // Schedule descriptor — null for one-shot runs. JSONB shape:
   //   { cron: '0 9 * * 1', triggerOn: 'change' | 'always' }
-  scheduleSpec   Json?    @map("schedule_spec")
+  scheduleSpec      Json?     @map("schedule_spec")
   // Tool-loop transcript: array of { iteration, role, content?, toolCalls?, toolResult? }.
   // Append-only within a run; LangGraph migration target if loops grow past ~100 iters.
-  iterations     Json     @default("[]")
-  currentArtifactId String? @map("current_artifact_id")
-  startedAt      DateTime? @map("started_at")
-  completedAt    DateTime? @map("completed_at")
+  iterations        Json      @default("[]")
+  currentArtifactId String?   @map("current_artifact_id")
+  startedAt         DateTime? @map("started_at")
+  completedAt       DateTime? @map("completed_at")
   // Optional diagnostic surface
-  toolsUsed      String[] @map("tools_used")
-  errorMessage   String?  @map("error_message")
+  toolsUsed         String[]  @map("tools_used")
+  errorMessage      String?   @map("error_message")
   // Multi-turn thread this Run belongs to. Null for legacy single-turn Runs
   // created before Conversation persistence shipped.
-  conversationId String?  @map("conversation_id")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  conversationId    String?   @map("conversation_id")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
 
-  artifacts Artifact[]
+  artifacts    Artifact[]
   conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
 
   @@index([organizationId, createdAt])
@@ -1871,24 +1867,24 @@ model Run {
 }
 
 model Artifact {
-  id             String   @id @default(cuid())
-  runId          String   @map("run_id")
-  organizationId String   @map("organization_id")
+  id               String    @id @default(cuid())
+  runId            String    @map("run_id")
+  organizationId   String    @map("organization_id")
   // Logical reference; null for org-scoped artifacts.
-  facilityId     String?  @map("facility_id")
+  facilityId       String?   @map("facility_id")
   // 'Report' | 'Table' | 'Plan' | 'Recommendation' | 'DraftedAction'
-  type           String
-  title          String?
+  type             String
+  title            String?
   // Pointer to the most recent ArtifactVersion (denormalized for fast reads).
   // Null while the first version is still being produced.
-  currentVersionId String? @map("current_version_id")
+  currentVersionId String?   @map("current_version_id")
   // Set when the user explicitly saves/pins this artifact for later. Drives
   // the "Saved Reports" surface and the click-through link from the activity
   // pane. Null = transient (will live alongside the run but not surface in
   // the saved list).
-  pinnedAt       DateTime? @map("pinned_at")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  pinnedAt         DateTime? @map("pinned_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   run      Run               @relation(fields: [runId], references: [id], onDelete: Cascade)
   versions ArtifactVersion[]
@@ -1901,13 +1897,13 @@ model Artifact {
 }
 
 model ArtifactVersion {
-  id           String   @id @default(cuid())
-  artifactId   String   @map("artifact_id")
+  id                String   @id @default(cuid())
+  artifactId        String   @map("artifact_id")
   // Append-only payload — markdown content, table data, draft action shape, etc.
-  content      Json
+  content           Json
   // Optional reference to the iteration step in Run.iterations that produced this version.
-  producedByTurnIdx Int? @map("produced_by_turn_idx")
-  createdAt    DateTime @default(now()) @map("created_at")
+  producedByTurnIdx Int?     @map("produced_by_turn_idx")
+  createdAt         DateTime @default(now()) @map("created_at")
 
   artifact Artifact @relation(fields: [artifactId], references: [id], onDelete: Cascade)
 
@@ -1916,21 +1912,21 @@ model ArtifactVersion {
 }
 
 model Notification {
-  id             String   @id @default(cuid())
-  userId         String   @map("user_id")
-  organizationId String   @map("organization_id")
+  id             String    @id @default(cuid())
+  userId         String    @map("user_id")
+  organizationId String    @map("organization_id")
   // Optional links into Run/Artifact for click-through.
-  runId          String?  @map("run_id")
-  artifactId     String?  @map("artifact_id")
+  runId          String?   @map("run_id")
+  artifactId     String?   @map("artifact_id")
   // 'agent_finding' | 'drafted_action' | 'run_completed' | 'run_failed' etc.
   type           String
   // 'info' | 'warning' | 'critical'
-  severity       String   @default("info")
+  severity       String    @default("info")
   title          String
-  body           String?  @db.Text
-  read           Boolean  @default(false)
+  body           String?   @db.Text
+  read           Boolean   @default(false)
   readAt         DateTime? @map("read_at")
-  createdAt      DateTime @default(now()) @map("created_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
 
   @@index([userId, read, createdAt])
   @@index([organizationId, createdAt])
@@ -1944,20 +1940,20 @@ model Notification {
 // Replaces the localStorage `chat-storage` namespace for cross-device
 // continuity. organizationId + userId are logical references.
 model Conversation {
-  id             String   @id @default(cuid())
-  organizationId String   @map("organization_id")
-  userId         String   @map("user_id")
+  id             String    @id @default(cuid())
+  organizationId String    @map("organization_id")
+  userId         String    @map("user_id")
   // Logical reference to MetrcFacility — null for org-wide threads.
-  facilityId     String?  @map("facility_id")
+  facilityId     String?   @map("facility_id")
   // First user prompt (truncated to ~120 chars) or LLM-generated summary.
   title          String
   // Append-bumped on every message write so the rail can sort by recency
   // without reading the messages relation.
-  lastMessageAt  DateTime @default(now()) @map("last_message_at")
+  lastMessageAt  DateTime  @default(now()) @map("last_message_at")
   // Soft-archived threads stay queryable but drop out of the "Recent" list.
   archivedAt     DateTime? @map("archived_at")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
   messages ConversationMessage[]
   runs     Run[]
@@ -2002,7 +1998,7 @@ model CopilotOrgSettings {
   // status for human review/submit. False (default) means analysis-only mode.
   copilotWritesEnabled  Boolean  @default(false) @map("copilot_writes_enabled")
   // Soft monthly cap (USD). Scheduled runs pause at 80% utilization.
-  monthlyBudgetUsd      Decimal? @db.Decimal(10, 2) @map("monthly_budget_usd")
+  monthlyBudgetUsd      Decimal? @map("monthly_budget_usd") @db.Decimal(10, 2)
   // Per-org acceptance criteria for trust ladder — denormalized for ops dashboards
   draftedActionsCount   Int      @default(0) @map("drafted_actions_count")
   submittedActionsCount Int      @default(0) @map("submitted_actions_count")
@@ -2011,7 +2007,6 @@ model CopilotOrgSettings {
 
   @@map("copilot_org_settings")
 }
-
 
 // ============================================================
 // LLM providers (managed by super admins)
@@ -2028,6 +2023,17 @@ model AppSetting {
   updatedAt DateTime @updatedAt
 
   @@map("app_settings")
+}
+
+/// Free Copilot questions used on the public demo (DEMO_MODE=1), per day. `bucket` is a
+/// salted hash of the visitor's IP, or "global" for the demo-wide total; raw IPs are never stored.
+model DemoAiUsage {
+  bucket String
+  day    String // UTC date, YYYY-MM-DD
+  count  Int    @default(0)
+
+  @@id([bucket, day])
+  @@map("demo_ai_usage")
 }
 
 model LlmProvider {
