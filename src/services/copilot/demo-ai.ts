@@ -1,6 +1,8 @@
 import { PROVIDER_DEFAULTS, PROVIDER_TRAITS, type ResolvedLlm } from '@/services/llm/types';
 import { DEMO_BAD_KEY_MESSAGE, DEMO_QUOTA_MESSAGE } from './demo-quota';
 
+export const DEMO_OWN_KEY_CREDIT_MESSAGE = 'Your OpenRouter key is out of credit. Add credit in OpenRouter, or remove the key to use the free questions.';
+
 /**
  * How a Copilot request on the public demo gets its AI: the visitor's own OpenRouter key
  * (sent per request in X-OpenRouter-Key, never stored), or one of the free questions on the
@@ -66,9 +68,9 @@ export async function resolveDemoAccess(o: {
 }
 
 /** A friendlier message for the two OpenRouter failures a demo visitor can cause. */
-export function demoErrorMessage(err: unknown): string | null {
+export function demoErrorMessage(err: unknown, ownKey = false): string | null {
   const msg = err instanceof Error ? err.message : '';
-  if (/OpenRouter error 402\b/.test(msg)) return DEMO_QUOTA_MESSAGE;
+  if (/OpenRouter error 402\b/.test(msg)) return ownKey ? DEMO_OWN_KEY_CREDIT_MESSAGE : DEMO_QUOTA_MESSAGE;
   if (/OpenRouter error 401\b/.test(msg)) return DEMO_BAD_KEY_MESSAGE;
   return null;
 }

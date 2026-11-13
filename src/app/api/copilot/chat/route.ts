@@ -128,11 +128,8 @@ async function demoGate(req: NextRequest, model: string | undefined): Promise<
   if (access.kind === 'refused') return { refused: new Response(access.message, { status: access.status }) };
   return {
     llm: access.kind === 'own' ? access.llm : undefined,
-    onError: async (err) => {
-      // The visitor got no answer, so a failed free question is given back.
-      if (access.kind === 'house') await quota.refund().catch(() => {});
-      return demoErrorMessage(err);
-    },
+    // A failed free question is not given back: the tool loop may have made paid calls first.
+    onError: async (err) => demoErrorMessage(err, access.kind === 'own'),
   };
 }
 

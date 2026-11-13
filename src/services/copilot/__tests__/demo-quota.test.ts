@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  bucketFor, clientIp, consumeDemoQuestion, demoQuotaLimits, peekDemoQuota, refundDemoQuestion, utcDay, type QuotaStore,
+  bucketFor, clientIp, consumeDemoQuestion, demoQuotaLimits, peekDemoQuota, utcDay, type QuotaStore,
 } from '@/services/copilot/demo-quota';
 
 function memoryStore(): QuotaStore & { rows: Map<string, number> } {
@@ -41,6 +41,12 @@ describe('clientIp', () => {
     expect(clientIp('1.2.3.4, 203.0.113.9')).toBe('203.0.113.9');
     expect(clientIp(' 203.0.113.9 ')).toBe('203.0.113.9');
     expect(clientIp(['9.9.9.9', '203.0.113.9'])).toBe('203.0.113.9');
+  });
+  it('counts one IPv6 /64 as one visitor', () => {
+    expect(clientIp('2001:db8:aa:bb:1::1')).toBe('2001:db8:aa:bb::/64');
+    expect(clientIp('2001:db8:aa:bb:ffff:2:3:4')).toBe('2001:db8:aa:bb::/64');
+    expect(clientIp('2001:db8::1')).toBe('2001:db8:0:0::/64');
+    expect(clientIp('::ffff:203.0.113.9')).toBe('203.0.113.9');
   });
   it('falls back to one shared bucket when the header is missing', () => {
     expect(clientIp(undefined)).toBe('unknown');
@@ -97,15 +103,12 @@ describe('consumeDemoQuestion', () => {
   });
 });
 
-describe('peekDemoQuota and refundDemoQuestion', () => {
-  it('peek does not charge, refund gives the question back', async () => {
+describe('peekDemoQuota', () => {
+  it('reads the count without charging', async () => {
     const store = memoryStore();
     expect(await peekDemoQuota(store, opts('1.1.1.1'))).toEqual({ remaining: 5, perVisitor: 5 });
     await consumeDemoQuestion(store, opts('1.1.1.1'));
     expect(await peekDemoQuota(store, opts('1.1.1.1'))).toEqual({ remaining: 4, perVisitor: 5 });
     expect(await peekDemoQuota(store, opts('1.1.1.1'))).toEqual({ remaining: 4, perVisitor: 5 });
-    await refundDemoQuestion(store, opts('1.1.1.1'));
-    expect(await peekDemoQuota(store, opts('1.1.1.1'))).toEqual({ remaining: 5, perVisitor: 5 });
-    expect(await store.count('global', utcDay(NOW))).toBe(0);
   });
 });

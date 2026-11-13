@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { byoKeyLlm, demoErrorMessage, parseOwnKey, resolveDemoAccess } from '@/services/copilot/demo-ai';
+import { DEMO_OWN_KEY_CREDIT_MESSAGE, byoKeyLlm, demoErrorMessage, parseOwnKey, resolveDemoAccess } from '@/services/copilot/demo-ai';
 import { DEMO_BAD_KEY_MESSAGE, DEMO_QUOTA_MESSAGE } from '@/services/copilot/demo-quota';
 import { LlmProviderError } from '@/services/llm/types';
 
@@ -84,6 +84,9 @@ describe('demoErrorMessage', () => {
   it('maps a spent house key to the quota message and a bad key to its own message', () => {
     expect(demoErrorMessage(new LlmProviderError('OpenRouter error 402: {"error":"insufficient credits"}'))).toBe(DEMO_QUOTA_MESSAGE);
     expect(demoErrorMessage(new LlmProviderError('OpenRouter error 401: {"error":"no auth"}'))).toBe(DEMO_BAD_KEY_MESSAGE);
+  });
+  it('tells a visitor when their own key is out of credit', () => {
+    expect(demoErrorMessage(new LlmProviderError('OpenRouter error 402: {}'), true)).toBe(DEMO_OWN_KEY_CREDIT_MESSAGE);
   });
   it('leaves other errors alone', () => {
     expect(demoErrorMessage(new LlmProviderError('OpenRouter error 500: boom'))).toBeNull();

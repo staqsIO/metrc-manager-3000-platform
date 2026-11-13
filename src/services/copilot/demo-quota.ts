@@ -40,7 +40,19 @@ export function demoQuotaLimits(env: Record<string, string | undefined>): DemoQu
 export function clientIp(forwardedFor: string | string[] | null | undefined): string {
   const raw = Array.isArray(forwardedFor) ? forwardedFor.join(',') : forwardedFor ?? '';
   const last = raw.split(',').map((s) => s.trim()).filter(Boolean).pop();
-  return last ?? 'unknown';
+  return last ? ipv6Network(last) : 'unknown';
+}
+
+/** One IPv6 client usually holds a whole /64, so it counts as one visitor. IPv4 is unchanged. */
+function ipv6Network(ip: string): string {
+  if (!ip.includes(':')) return ip;
+  const v4 = ip.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
+  if (v4) return v4[1];
+  const [head, tail = ''] = ip.toLowerCase().split('::');
+  const h = head ? head.split(':') : [];
+  const tl = ip.includes('::') ? (tail ? tail.split(':') : []) : [];
+  const groups = [...h, ...Array(Math.max(0, 8 - h.length - tl.length)).fill('0'), ...tl];
+  return groups.slice(0, 4).map((g) => g.replace(/^0+(?=.)/, '')).join(':') + '::/64';
 }
 
 /** Salted hash, so the table never holds a raw IP. */
@@ -63,13 +75,6 @@ export async function consumeDemoQuestion(
     return { allowed: false, remaining: 0 };
   }
   return { allowed: true, remaining: Math.min(o.limits.perVisitor - mine, o.limits.perDay - all) };
-}
-
-/** Gives a question back, for when the house key failed and the visitor got no answer. */
-export async function refundDemoQuestion(store: QuotaStore, o: DemoQuotaOptions): Promise<void> {
-  const day = utcDay(o.now ?? new Date());
-  await store.decrement(bucketFor(o.ip, o.secret), day);
-  await store.decrement(GLOBAL, day);
 }
 
 export async function peekDemoQuota(
@@ -110,7 +115,6 @@ export function demoQuotaFor(db: PrismaClient, ip: string, env: Record<string, s
   const store = prismaQuotaStore(db);
   return {
     consume: () => consumeDemoQuestion(store, o),
-    refund: () => refundDemoQuestion(store, o),
     peek: () => peekDemoQuota(store, o),
   };
 }

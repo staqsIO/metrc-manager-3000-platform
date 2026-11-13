@@ -83,7 +83,8 @@ export async function openRouterChat(
   }
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new LlmProviderError(`OpenRouter error ${res.status}: ${text.slice(0, 300)}`);
+    // Redacted in case the body ever echoes the key; demo visitors supply their own.
+    throw new LlmProviderError(`OpenRouter error ${res.status}: ${text.split(apiKey).join('[redacted]').slice(0, 300)}`);
   }
   const data = (await res.json()) as { choices?: { message: ChatMessage }[]; usage?: { total_tokens?: number } };
   if (!data.choices?.length) throw new LlmProviderError('OpenRouter returned no choices');
