@@ -33,6 +33,7 @@ import {
 import { formatRelativeTime, deriveDisplayName, reconcileSelectedModel } from '@/features/copilot/lib/format'
 import { useCopilotChat } from '@/features/copilot/hooks/useCopilotChat'
 import { getBrand } from '@/lib/brand'
+import DemoAiPanel from './DemoAiPanel'
 
 interface CopilotPanelProps {
   facilityId: string | null
@@ -844,6 +845,7 @@ export default function CopilotPanel({
 
       {/* Input */}
       <div className="border-t border-border p-3 shrink-0">
+        <DemoAiPanel busy={isSending} />
         <div className="flex gap-2">
           <input
             type="text"
