@@ -116,7 +116,7 @@ async function demoGate(req: NextRequest, model: string | undefined): Promise<
   | { llm?: ResolvedLlm; onError: (err: unknown) => Promise<string | null> }
 > {
   if (!isDemoMode()) return { onError: async () => null };
-  const quota = demoQuotaFor(prisma, clientIp(req.headers.get('x-forwarded-for')));
+  const quota = demoQuotaFor(prisma, clientIp(req.headers.get('x-forwarded-for'), req.headers.get('x-real-ip')));
   const keyHeader = req.headers.get(OWN_KEY_HEADER);
   const access = await resolveDemoAccess({
     demoMode: true,

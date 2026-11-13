@@ -208,7 +208,7 @@ export const coaRouter = createTRPCRouter({
           });
         }
 
-        const result = await runParsingPipeline(pdfText, () => takeDemoQuestion(ctx.forwardedFor));
+        const result = await runParsingPipeline(pdfText, () => takeDemoQuestion(ctx));
 
         const preview = {
           fileName: input.fileName,

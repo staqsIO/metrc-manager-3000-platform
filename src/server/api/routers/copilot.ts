@@ -239,7 +239,7 @@ export const copilotRouter = createTRPCRouter({
   // Send a message and get a response (non-streaming fallback)
   // Supports both facility mode (facilityId provided) and org mode (no facilityId)
   /** Free questions left for this visitor on the public demo; null on a real install. */
-  demoQuota: platformProcedure.query(({ ctx }) => demoQuotaStatus(ctx.forwardedFor)),
+  demoQuota: platformProcedure.query(({ ctx }) => demoQuotaStatus(ctx)),
 
   sendMessage: platformProcedure
     .input(z.object({
@@ -260,7 +260,7 @@ export const copilotRouter = createTRPCRouter({
           message: 'Rate limit exceeded. Please wait a moment before sending more messages.',
         });
       }
-      await takeDemoQuestionOrThrow(ctx.forwardedFor);
+      await takeDemoQuestionOrThrow(ctx);
 
       const historyMapped = input.history?.filter(m => m.role === 'user' || m.role === 'assistant')
         .map(m => ({ role: m.role as 'user' | 'assistant', content: m.content }));

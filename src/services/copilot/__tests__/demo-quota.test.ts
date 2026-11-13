@@ -48,6 +48,11 @@ describe('clientIp', () => {
     expect(clientIp('2001:db8::1')).toBe('2001:db8:0:0::/64');
     expect(clientIp('::ffff:203.0.113.9')).toBe('203.0.113.9');
   });
+  it('prefers X-Real-IP, which the edge proxy sets and overwrites', () => {
+    expect(clientIp('9.9.9.9, 100.64.0.2', '203.0.113.9')).toBe('203.0.113.9');
+    expect(clientIp(undefined, ' 203.0.113.9 ')).toBe('203.0.113.9');
+    expect(clientIp('100.64.0.2', '')).toBe('100.64.0.2');
+  });
   it('falls back to one shared bucket when the header is missing', () => {
     expect(clientIp(undefined)).toBe('unknown');
     expect(clientIp('')).toBe('unknown');

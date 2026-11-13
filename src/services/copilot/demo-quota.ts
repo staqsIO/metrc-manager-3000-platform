@@ -33,11 +33,14 @@ export function demoQuotaLimits(env: Record<string, string | undefined>): DemoQu
 }
 
 /**
- * The last X-Forwarded-For entry: the address our proxy saw. Earlier entries come from the
- * client and can be anything, so trusting the first would let a visitor pick a fresh bucket
- * per request.
+ * The visitor's address. X-Real-IP comes first: Railway's edge sets it and overwrites any copy
+ * the client sends. Measured on the demo (2026-11-13): the last X-Forwarded-For entry was not
+ * the visitor's address, and X-Real-IP was. X-Forwarded-For is only a fallback for other hosts. Never trust
+ * the first X-Forwarded-For entry: the client writes it.
  */
-export function clientIp(forwardedFor: string | string[] | null | undefined): string {
+export function clientIp(forwardedFor: string | string[] | null | undefined, realIp?: string | string[] | null): string {
+  const real = (Array.isArray(realIp) ? realIp[0] : realIp)?.trim();
+  if (real) return ipv6Network(real);
   const raw = Array.isArray(forwardedFor) ? forwardedFor.join(',') : forwardedFor ?? '';
   const last = raw.split(',').map((s) => s.trim()).filter(Boolean).pop();
   return last ? ipv6Network(last) : 'unknown';
