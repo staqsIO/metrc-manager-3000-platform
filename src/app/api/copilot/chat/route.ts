@@ -11,7 +11,7 @@ import { getBrand } from '@/lib/brand';
 import type { MetrcFacility } from '@prisma/client';
 import { resolveLlm } from '@/services/llm/registry';
 import type { ResolvedLlm } from '@/services/llm/types';
-import { clientIp, demoQuotaFor, isDemoMode } from '@/services/copilot/demo-quota';
+import { demoQuotaFor, isDemoMode, visitorIp } from '@/services/copilot/demo-quota';
 import { OWN_KEY_HEADER, demoErrorMessage, resolveDemoAccess } from '@/services/copilot/demo-ai';
 
 // Input validation — mirrors the tRPC sendMessage schema
@@ -116,7 +116,7 @@ async function demoGate(req: NextRequest, model: string | undefined): Promise<
   | { llm?: ResolvedLlm; onError: (err: unknown) => Promise<string | null> }
 > {
   if (!isDemoMode()) return { onError: async () => null };
-  const quota = demoQuotaFor(prisma, clientIp(req.headers.get('x-forwarded-for'), req.headers.get('x-real-ip')));
+  const quota = demoQuotaFor(prisma, visitorIp(req.headers.get('x-forwarded-for'), req.headers.get('x-real-ip')));
   const keyHeader = req.headers.get(OWN_KEY_HEADER);
   const access = await resolveDemoAccess({
     demoMode: true,

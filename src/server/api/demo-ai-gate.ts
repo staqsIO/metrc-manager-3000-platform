@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { prisma } from '@/lib/prisma';
 import { resolveLlm } from '@/services/llm/registry';
-import { DEMO_QUOTA_MESSAGE, clientIp, demoQuotaFor, isDemoMode } from '@/services/copilot/demo-quota';
+import { DEMO_QUOTA_MESSAGE, demoQuotaFor, isDemoMode, visitorIp } from '@/services/copilot/demo-quota';
 
 /** The client-address headers from the tRPC context (src/lib/trpc.ts). */
 export interface IpHeaders { forwardedFor?: string | string[] | null; realIp?: string | string[] | null }
@@ -14,7 +14,7 @@ export interface IpHeaders { forwardedFor?: string | string[] | null; realIp?: s
  */
 export async function takeDemoQuestion(ctx: IpHeaders): Promise<boolean> {
   if (!isDemoMode() || !(await resolveLlm())) return true;
-  return (await demoQuotaFor(prisma, clientIp(ctx.forwardedFor, ctx.realIp)).consume()).allowed;
+  return (await demoQuotaFor(prisma, visitorIp(ctx.forwardedFor, ctx.realIp)).consume()).allowed;
 }
 
 export async function takeDemoQuestionOrThrow(ctx: IpHeaders): Promise<void> {
@@ -24,6 +24,6 @@ export async function takeDemoQuestionOrThrow(ctx: IpHeaders): Promise<void> {
 /** What the demo's AI panel shows; null on a real install. */
 export async function demoQuotaStatus(ctx: IpHeaders) {
   if (!isDemoMode()) return null;
-  const { remaining, perVisitor } = await demoQuotaFor(prisma, clientIp(ctx.forwardedFor, ctx.realIp)).peek();
+  const { remaining, perVisitor } = await demoQuotaFor(prisma, visitorIp(ctx.forwardedFor, ctx.realIp)).peek();
   return { remaining, perVisitor, houseConfigured: !!(await resolveLlm()) };
 }

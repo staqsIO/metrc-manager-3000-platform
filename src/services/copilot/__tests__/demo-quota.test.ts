@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  bucketFor, clientIp, consumeDemoQuestion, demoQuotaLimits, peekDemoQuota, utcDay, type QuotaStore,
+  bucketFor, clientIp, consumeDemoQuestion, visitorIp, demoQuotaLimits, peekDemoQuota, utcDay, type QuotaStore,
 } from '@/services/copilot/demo-quota';
 
 function memoryStore(): QuotaStore & { rows: Map<string, number> } {
@@ -48,10 +48,21 @@ describe('clientIp', () => {
     expect(clientIp('2001:db8::1')).toBe('2001:db8:0:0::/64');
     expect(clientIp('::ffff:203.0.113.9')).toBe('203.0.113.9');
   });
-  it('prefers X-Real-IP, which the edge proxy sets and overwrites', () => {
-    expect(clientIp('9.9.9.9, 100.64.0.2', '203.0.113.9')).toBe('203.0.113.9');
-    expect(clientIp(undefined, ' 203.0.113.9 ')).toBe('203.0.113.9');
-    expect(clientIp('100.64.0.2', '')).toBe('100.64.0.2');
+  it('uses X-Real-IP only when the host says its proxy sets it', () => {
+    const trust = true;
+    expect(clientIp('9.9.9.9, 100.64.0.2', '203.0.113.9', trust)).toBe('203.0.113.9');
+    expect(clientIp(undefined, [' 203.0.113.9 '], trust)).toBe('203.0.113.9');
+    expect(clientIp(undefined, '2001:db8:aa:bb:1::1', trust)).toBe('2001:db8:aa:bb::/64');
+    expect(clientIp('100.64.0.2', '', trust)).toBe('100.64.0.2');
+  });
+  it('ignores X-Real-IP by default, since a client can send any value', () => {
+    expect(clientIp('9.9.9.9, 100.64.0.2', '203.0.113.9')).toBe('100.64.0.2');
+    expect(clientIp(undefined, '203.0.113.9')).toBe('unknown');
+  });
+  it('visitorIp trusts X-Real-IP only with DEMO_TRUST_REAL_IP=1', () => {
+    expect(visitorIp('100.64.0.2', '203.0.113.9', { DEMO_TRUST_REAL_IP: '1' })).toBe('203.0.113.9');
+    expect(visitorIp('100.64.0.2', '203.0.113.9', {})).toBe('100.64.0.2');
+    expect(visitorIp('100.64.0.2', '203.0.113.9', { DEMO_TRUST_REAL_IP: 'true' })).toBe('100.64.0.2');
   });
   it('falls back to one shared bucket when the header is missing', () => {
     expect(clientIp(undefined)).toBe('unknown');
