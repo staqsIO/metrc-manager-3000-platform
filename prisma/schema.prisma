@@ -2030,6 +2030,17 @@ model AppSetting {
   @@map("app_settings")
 }
 
+/// Free Copilot questions used on the public demo (DEMO_MODE=1), per day. `bucket` is a
+/// salted hash of the visitor's IP, or "global" for the demo-wide total; raw IPs are never stored.
+model DemoAiUsage {
+  bucket String
+  day    String // UTC date, YYYY-MM-DD
+  count  Int    @default(0)
+
+  @@id([bucket, day])
+  @@map("demo_ai_usage")
+}
+
 model LlmProvider {
   id                       String          @id @default(cuid())
   name                     String          @unique

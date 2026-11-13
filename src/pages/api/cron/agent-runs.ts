@@ -22,6 +22,7 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { verifyCronSecret } from '@/lib/cron-auth'
+import { isDemoMode } from '@/services/copilot/demo-quota'
 import { CronExpressionParser } from 'cron-parser'
 import { prisma, dashboardPrisma } from '@/lib/prisma'
 import { getProductionOrgIds } from '@/services/tenant';
@@ -216,6 +217,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
+  // The public demo's house key is for counted free questions; visitors' scheduled runs would spend it uncounted.
+  if (isDemoMode()) return res.status(200).json({ skipped: 'demo mode' })
 
   const now = new Date()
   // Tenant gate: only process scheduled runs belonging to PRODUCTION orgs.

@@ -1074,6 +1074,12 @@ export interface ExecuteCopilotParams {
   captureAudit?: boolean;
   /** Multi-turn Conversation this turn belongs to. Persisted on Run for resume + transcript. */
   conversationId?: string | null;
+  /** Overrides the configured provider for this one query, e.g. a demo visitor's own key. Never stored. */
+  llm?: ResolvedLlm;
+}
+
+export function llmForQuery(params: Pick<ExecuteCopilotParams, 'llm' | 'model'>): Promise<ResolvedLlm | null> {
+  return params.llm ? Promise.resolve(params.llm) : resolveLlm(params.model);
 }
 
 // ---------------------------------------------------------------------------
@@ -1432,7 +1438,7 @@ export async function executeCopilotQuery(params: ExecuteCopilotParams): Promise
   artifactId?: string;
 }> {
   const { facility, orgFacilities, message, history, userId, prisma, onToolCall, skillId } = params;
-  const llm = await resolveLlm(params.model);
+  const llm = await llmForQuery(params);
 
   // Auto-detect skill from typed phrases — when the user types a known
   // trigger phrase (e.g. "What can I sample out?") instead of clicking the

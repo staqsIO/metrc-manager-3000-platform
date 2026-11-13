@@ -1,4 +1,5 @@
 import type { AnonymizationAudit } from '@/services/copilot/anonymizer';
+import { ownKeyHeaders } from './demo-key';
 
 /**
  * SSE client for the Copilot chat endpoint. Decodes `event: <type>` /
@@ -22,7 +23,7 @@ export async function streamCopilotChat(
 ): Promise<{ content: string; toolsUsed: string[]; audit?: AnonymizationAudit; conversationId?: string; runId?: string; artifactId?: string }> {
   const res = await fetch('/api/copilot/chat', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...ownKeyHeaders() },
     body: JSON.stringify({
       ...(facilityId ? { facilityId } : {}),
       message,

@@ -12,6 +12,8 @@ type CreateContextOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   session: any;
   activeOrgId: string | null;
+  /** Raw X-Forwarded-For, used only for the demo's free-question limit. */
+  forwardedFor?: string | string[] | null;
 };
 
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
@@ -22,13 +24,15 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
     prisma,
     session: opts.session,
     activeOrgId: opts.activeOrgId,
+    // Spread so the field stays optional for createCaller in tests and server components.
+    ...(opts.forwardedFor != null ? { forwardedFor: opts.forwardedFor } : {}),
   };
 };
 
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const session = await getServerSession(opts.req, opts.res, authOptions);
   const activeOrgId = opts.req.cookies[ACTIVE_ORG_COOKIE] ?? null;
-  return createInnerTRPCContext({ session, activeOrgId });
+  return createInnerTRPCContext({ session, activeOrgId, forwardedFor: opts.req.headers['x-forwarded-for'] ?? null });
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create();

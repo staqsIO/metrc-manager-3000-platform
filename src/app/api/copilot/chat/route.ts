@@ -9,6 +9,10 @@ import { ACTIVE_ORG_COOKIE } from '@/lib/active-org';
 import { isMetrcPlatformEnabled } from '@/lib/feature-flags';
 import { getBrand } from '@/lib/brand';
 import type { MetrcFacility } from '@prisma/client';
+import { resolveLlm } from '@/services/llm/registry';
+import type { ResolvedLlm } from '@/services/llm/types';
+import { clientIp, demoQuotaFor, isDemoMode } from '@/services/copilot/demo-quota';
+import { OWN_KEY_HEADER, demoErrorMessage, resolveDemoAccess } from '@/services/copilot/demo-ai';
 
 // Input validation — mirrors the tRPC sendMessage schema
 const requestSchema = z.object({
@@ -102,6 +106,33 @@ async function appendConversationMessage(opts: {
   }
 }
 
+/**
+ * On the public demo, picks the visitor's own key or charges a free question on the house key.
+ * Called right before streaming, after every access check, so a refused request costs nothing.
+ * The key header is never logged or echoed back.
+ */
+async function demoGate(req: NextRequest, model: string | undefined): Promise<
+  | { refused: Response }
+  | { llm?: ResolvedLlm; onError: (err: unknown) => Promise<string | null> }
+> {
+  if (!isDemoMode()) return { onError: async () => null };
+  const quota = demoQuotaFor(prisma, clientIp(req.headers.get('x-forwarded-for')));
+  const keyHeader = req.headers.get(OWN_KEY_HEADER);
+  const access = await resolveDemoAccess({
+    demoMode: true,
+    keyHeader,
+    model,
+    houseConfigured: keyHeader ? true : !!(await resolveLlm(model)),
+    quota,
+  });
+  if (access.kind === 'refused') return { refused: new Response(access.message, { status: access.status }) };
+  return {
+    llm: access.kind === 'own' ? access.llm : undefined,
+    // A failed free question is not given back: the tool loop may have made paid calls first.
+    onError: async (err) => demoErrorMessage(err, access.kind === 'own'),
+  };
+}
+
 export async function POST(req: NextRequest) {
   // Authenticate
   const session = await getServerSession(authOptions);
@@ -172,6 +203,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const demo = await demoGate(req, input.model);
+    if ('refused' in demo) return demo.refused;
+
     const stream = new ReadableStream({
       async start(controller) {
         let streamClosed = false;
@@ -203,6 +237,7 @@ export async function POST(req: NextRequest) {
             model: input.model,
             skillId: input.skillId,
             captureAudit: input.captureAudit,
+            llm: demo.llm,
             conversationId: conversation?.id ?? null,
             onToolCall: (event) => {
               if (event.tool === '_thinking') return;
@@ -230,7 +265,7 @@ export async function POST(req: NextRequest) {
             ...(conversation ? { conversationId: conversation.id } : {}),
           });
         } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Internal error';
+          const errorMessage = (await demo.onError(err)) ?? (err instanceof Error ? err.message : 'Internal error');
           send('error', { message: errorMessage });
         } finally {
           controller.close();
@@ -287,6 +322,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const demo = await demoGate(req, input.model);
+    if ('refused' in demo) return demo.refused;
+
     const stream = new ReadableStream({
       async start(controller) {
         let streamClosed = false;
@@ -316,6 +354,7 @@ export async function POST(req: NextRequest) {
             model: input.model,
             skillId: input.skillId,
             captureAudit: input.captureAudit,
+            llm: demo.llm,
             conversationId: orgConversation?.id ?? null,
             onToolCall: (event) => {
               if (event.tool === '_thinking') return;
@@ -343,7 +382,7 @@ export async function POST(req: NextRequest) {
             ...(orgConversation ? { conversationId: orgConversation.id } : {}),
           });
         } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Internal error';
+          const errorMessage = (await demo.onError(err)) ?? (err instanceof Error ? err.message : 'Internal error');
           send('error', { message: errorMessage });
         } finally {
           controller.close();
