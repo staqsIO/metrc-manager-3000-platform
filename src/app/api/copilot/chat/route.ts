@@ -7,6 +7,7 @@ import { executeCopilotQuery, checkCopilotRateLimit } from '@/services/copilot/c
 import { getUserOrgIds } from '@/lib/auth-helpers';
 import { ACTIVE_ORG_COOKIE } from '@/lib/active-org';
 import { isMetrcPlatformEnabled } from '@/lib/feature-flags';
+import { getBrand } from '@/lib/brand';
 import type { MetrcFacility } from '@prisma/client';
 
 // Input validation — mirrors the tRPC sendMessage schema
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
 
   // Platform kill switch (mirrors platformProcedure in src/lib/trpc.ts)
   if (!isMetrcPlatformEnabled()) {
-    return new Response('The Metrc Platform is currently unavailable.', { status: 403 });
+    return new Response(`${getBrand().name} is currently unavailable.`, { status: 403 });
   }
 
   // Parse and validate body

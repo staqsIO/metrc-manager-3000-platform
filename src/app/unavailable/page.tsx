@@ -12,7 +12,7 @@ export default function UnavailablePage() {
           </div>
           <h2 className="text-2xl font-bold">Platform Unavailable</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            The {brand.name} Metrc Platform is currently unavailable. We&apos;re working on
+            {brand.name} is currently unavailable. We&apos;re working on
             bringing it online. Please check back soon.
           </p>
         </div>

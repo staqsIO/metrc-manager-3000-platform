@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { prisma, dashboardPrisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { isMetrcPlatformEnabled } from '@/lib/feature-flags';
+import { getBrand } from '@/lib/brand';
 import { ACTIVE_ORG_COOKIE } from '@/lib/active-org';
 import { getUserOrgIds } from '@/lib/auth-helpers';
 
@@ -72,7 +73,7 @@ export const superAdminProcedure = protectedProcedure.use(async ({ ctx, next }) 
 // Platform procedure - requires auth and the platform kill switch to be on
 export const platformProcedure = protectedProcedure.use(({ next }) => {
   if (!isMetrcPlatformEnabled()) {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'The Metrc Platform is currently unavailable.' });
+    throw new TRPCError({ code: 'FORBIDDEN', message: `${getBrand().name} is currently unavailable.` });
   }
   return next();
 });

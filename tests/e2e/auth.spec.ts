@@ -4,7 +4,7 @@ test.describe('Authentication Flow', () => {
   test('should display the sign-in page', async ({ page }) => {
     await page.goto('/auth/signin');
 
-    await expect(page.locator('h2')).toContainText('Formul8 Metrc Platform');
+    await expect(page.locator('h2')).toContainText('METRC Manager 3000');
     await expect(
       page.locator('button', { hasText: 'Google' })
     ).toBeVisible();

@@ -1,4 +1,4 @@
-# Build context: the install folder containing metrc-formul8-os-platform/ and metrc-formul8-os-client/
+# Build context: the install folder containing metrc-manager-3000-platform/ and metrc-manager-3000-client/
 FROM node:22-bookworm-slim AS base
 RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates curl \
  && rm -rf /var/lib/apt/lists/*
@@ -6,20 +6,20 @@ ENV COREPACK_HOME=/usr/local/share/corepack COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate && chmod -R a+rX /usr/local/share/corepack
 
 FROM base AS client
-WORKDIR /src/metrc-formul8-os-client
-COPY metrc-formul8-os-client/package.json metrc-formul8-os-client/package-lock.json ./
+WORKDIR /src/metrc-manager-3000-client
+COPY metrc-manager-3000-client/package.json metrc-manager-3000-client/package-lock.json ./
 # --ignore-scripts: the client's `prepare` build needs src/, copied next
 RUN npm ci --ignore-scripts
-COPY metrc-formul8-os-client/ ./
+COPY metrc-manager-3000-client/ ./
 RUN npm run build
 
 FROM base AS build
-WORKDIR /src/metrc-formul8-os-platform
-COPY --from=client /src/metrc-formul8-os-client /src/metrc-formul8-os-client
-COPY metrc-formul8-os-platform/package.json metrc-formul8-os-platform/pnpm-lock.yaml ./
+WORKDIR /src/metrc-manager-3000-platform
+COPY --from=client /src/metrc-manager-3000-client /src/metrc-manager-3000-client
+COPY metrc-manager-3000-platform/package.json metrc-manager-3000-platform/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
-COPY metrc-formul8-os-platform/ ./
-ARG NEXT_PUBLIC_BRAND_NAME=Formul8
+COPY metrc-manager-3000-platform/ ./
+ARG NEXT_PUBLIC_BRAND_NAME="METRC Manager 3000"
 ARG NEXT_PUBLIC_BRAND_LOGO_URL=/brand/logo.svg
 ENV NEXT_PUBLIC_BRAND_NAME=$NEXT_PUBLIC_BRAND_NAME NEXT_PUBLIC_BRAND_LOGO_URL=$NEXT_PUBLIC_BRAND_LOGO_URL
 # Build-time stubs; real values are injected at runtime.
@@ -41,9 +41,9 @@ RUN arch="${TARGETARCH:-amd64}" \
  && chmod +x /usr/local/bin/supercronic
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 RUN useradd -r -u 1001 app
-COPY --chown=app:app --from=client /src/metrc-formul8-os-client /metrc-formul8-os-client
+COPY --chown=app:app --from=client /src/metrc-manager-3000-client /metrc-manager-3000-client
 WORKDIR /app
-COPY --chown=app:app --from=build /src/metrc-formul8-os-platform /app
+COPY --chown=app:app --from=build /src/metrc-manager-3000-platform /app
 USER app
 EXPOSE 3000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=40s CMD curl -fsS http://localhost:${PORT:-3000}/api/health || exit 1

@@ -30,12 +30,12 @@ function defaultEnv(): Env {
  * always agree (a runtime fallback would make SSR and hydrated output diverge).
  */
 export function getBrand(env: Env = defaultEnv()): Brand {
-  const name = env.NEXT_PUBLIC_BRAND_NAME?.trim() || 'Formul8';
+  const name = env.NEXT_PUBLIC_BRAND_NAME?.trim() || 'METRC Manager 3000';
   return {
     name,
     logoUrl: env.NEXT_PUBLIC_BRAND_LOGO_URL?.trim() || '/brand/logo.svg',
-    supportEmail: env.SUPPORT_EMAIL?.trim() || 'support@formul8.ai',
-    emailFrom: env.EMAIL_FROM?.trim() || `${name} <noreply@formul8.ai>`,
+    supportEmail: env.SUPPORT_EMAIL?.trim() || 'support@staqs.io',
+    emailFrom: env.EMAIL_FROM?.trim() || `${name} <noreply@staqs.io>`,
     appUrl: (env.APP_URL?.trim() || env.NEXTAUTH_URL?.trim() || 'http://localhost:3000').replace(/\/$/, ''),
   };
 }

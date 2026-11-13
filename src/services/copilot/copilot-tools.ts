@@ -1,4 +1,4 @@
-// Tool definitions and executor for the Formul8 Copilot
+// Tool definitions and executor for the Copilot
 // Maps OpenAI-compatible tool schemas to local engine functions
 
 import { COPILOT_TOOLS, COPILOT_ACTION_TOOLS, ALL_COPILOT_TOOLS, CORE_COPILOT_TOOLS } from './copilot-tool-defs';
@@ -5152,7 +5152,7 @@ export function createToolExecutor(ctx: ToolExecutorContext) {
 
             return JSON.stringify({
               answer: answer.slice(0, 6000),
-              source: `formul8-knowledge-base (${agent})`,
+              source: `knowledge-base (${agent})`,
               note: 'This is general industry knowledge. Always cross-reference with facility-specific data from other tools.',
             });
           } catch (fetchErr) {

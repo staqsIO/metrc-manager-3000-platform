@@ -164,6 +164,8 @@ export function reconcileAuditTrails(
 
     if (!matched) {
       // Unmatched Canix action — check if it's a bypass
+      // 'formul8' is the source value Canix records for actions made through this platform's
+      // integration. It is stored data, so it keeps the old product name.
       if (canixAction.source !== 'formul8') {
         const isCritical = CRITICAL_ENTITY_TYPES.has(canixAction.entityType.toLowerCase());
         discrepancies.push({
@@ -172,7 +174,7 @@ export function reconcileAuditTrails(
           canixAction,
           entityType: canixAction.entityType,
           entityId: canixAction.entityId,
-          description: `${canixAction.entityType} ${canixAction.action} performed outside Formul8 platform (source: ${canixAction.source}, user: ${canixAction.userName})`,
+          description: `${canixAction.entityType} ${canixAction.action} performed outside this platform (source: ${canixAction.source}, user: ${canixAction.userName})`,
         });
       }
       byEntityType[canixAction.entityType]!.unmatched++;
