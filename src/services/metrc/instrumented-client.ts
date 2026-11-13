@@ -1,4 +1,4 @@
-import type { IMetrcClient } from '@metrc-formul8-os/client';
+import type { IMetrcClient } from '@metrc-manager-3000/client';
 import type { PrismaClient } from '@prisma/client';
 
 /**
@@ -10,7 +10,7 @@ import type { PrismaClient } from '@prisma/client';
  * the inner client's timing, regardless of whether the row insert has completed.
  * This is intentional: observability must never block the response path.
  *
- * Header capture limitation: `@metrc-formul8-os/client` throws `MetrcApiError` instances
+ * Header capture limitation: `@metrc-manager-3000/client` throws `MetrcApiError` instances
  * that carry a `statusCode` field, but does NOT surface response headers on
  * successful calls. Therefore `remainingQuota` and `requestId` are always null
  * today. If the SDK gains a header-callback API in the future, capture them here.

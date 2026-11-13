@@ -1,8 +1,8 @@
-# Formul8 Metrc Platform — Integration Guide
+# METRC Manager 3000 — Integration Guide
 
 ## What is this?
 
-Formul8 Metrc Platform is a compliance and inventory intelligence dashboard for cannabis facilities. It connects to **Metrc** (the state-mandated track-and-trace system) and provides:
+METRC Manager 3000 is a compliance and inventory intelligence dashboard for cannabis facilities. It connects to **Metrc** (the state-mandated track-and-trace system) and provides:
 
 - Real-time inventory visibility with aging analysis
 - Harvest tracking through drying, packaging, and waste recording
@@ -20,7 +20,7 @@ Formul8 Metrc Platform is a compliance and inventory intelligence dashboard for 
 
 Metrc is the regulatory track-and-trace system used by most US cannabis markets. Every licensed facility must report inventory movements — packages created, transfers sent, waste recorded, harvests finished — through Metrc.
 
-Formul8 connects to Metrc's REST API to **read** facility data and **execute** compliance-critical write operations. All communication uses HMAC-SHA256 authenticated requests with per-facility credentials.
+METRC Manager 3000 connects to Metrc's REST API to **read** facility data and **execute** compliance-critical write operations. All communication uses HMAC-SHA256 authenticated requests with per-facility credentials.
 
 ### What Metrc Data We Access
 
@@ -41,7 +41,7 @@ Formul8 connects to Metrc's REST API to **read** facility data and **execute** c
 
 Each facility has two API keys stored encrypted (AES-256-GCM) in the database:
 
-- **Vendor API Key** — Identifies Formul8 as the software vendor
+- **Vendor API Key** — Identifies your software vendor registration
 - **User API Key** — Identifies the specific facility/user
 
 Keys are decrypted only at request time and never persist in memory. Every API request includes an HMAC-SHA256 signature for integrity verification.
@@ -221,7 +221,7 @@ Action tools require explicit user confirmation before executing.
 
 ## Metrc API Endpoints Used
 
-Below is the complete list of Metrc API endpoints that Formul8 calls:
+Below is the complete list of Metrc API endpoints that METRC Manager 3000 calls:
 
 ### GET (Read) Endpoints
 
@@ -274,21 +274,21 @@ Here's how data flows through the system for a common workflow — creating reta
 
 ```
 1. Plants harvested → Metrc creates Harvest record
-   (GET /harvests/v2/active shows it in Formul8)
+   (GET /harvests/v2/active shows it in METRC Manager 3000)
 
 2. Operator records waste during drying
-   → Formul8 UI: Enter waste weight → Preview → Confirm
+   → METRC Manager 3000 UI: Enter waste weight → Preview → Confirm
    → POST /harvests/v2/waste (Metrc API)
    → Harvest.TotalWasteWeight updated
 
 3. Operator creates packages from dried harvest
-   → Formul8 UI: Select harvest, enter output package details → Preview → Confirm
+   → METRC Manager 3000 UI: Select harvest, enter output package details → Preview → Confirm
    → POST /harvests/v2/packages (Metrc API)
    → New packages appear in GET /packages/v1/active
    → Harvest.PackageCount and TotalPackagedWeight updated
 
 4. Operator finishes harvest (all weight accounted for)
-   → Formul8 UI: Select harvest → Preview → Confirm
+   → METRC Manager 3000 UI: Select harvest → Preview → Confirm
    → POST /harvests/v2/finish (Metrc API)
    → Harvest moves from active to inactive
 

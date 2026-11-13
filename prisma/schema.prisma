@@ -1,4 +1,4 @@
-// Metrc-Formul8-OS — Prisma schema (single PostgreSQL database)
+// METRC Manager 3000 — Prisma schema (single PostgreSQL database)
 
 generator client {
   provider = "prisma-client-js"
@@ -1771,7 +1771,7 @@ model HarvestSnapshot {
 /// `statusCode` is best-effort: 200 on success, the error's `statusCode` field
 /// (Metrc SDK MetrcApiError exposes this) on thrown errors, otherwise null.
 /// `remainingQuota` and `requestId` are reserved for future SDK-level header
-/// capture — the current `@metrc-formul8-os/client` package does not surface response
+/// capture — the current `@metrc-manager-3000/client` package does not surface response
 /// headers on success, so they remain null today.
 model MetrcApiCall {
   id              String   @id @default(cuid())

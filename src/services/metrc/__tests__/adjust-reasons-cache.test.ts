@@ -12,7 +12,7 @@ import {
   getCachedAdjustReasons,
   __resetAdjustReasonsCacheForTest,
 } from '../adjust-reasons-cache';
-import type { MetrcPackageAdjustReason } from '@metrc-formul8-os/client';
+import type { MetrcPackageAdjustReason } from '@metrc-manager-3000/client';
 
 const FACILITY_A = 'fac-a';
 const FACILITY_B = 'fac-b';

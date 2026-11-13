@@ -5,16 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: { path: metrc-formul8-os-platform, fetch-depth: 0 }
+        with: { path: metrc-manager-3000-platform, fetch-depth: 0 }
       - uses: actions/checkout@v4
-        with: { repository: "${{ github.repository_owner }}/metrc-formul8-os-client", path: metrc-formul8-os-client }
+        with: { repository: "${{ github.repository_owner }}/metrc-manager-3000-client", path: metrc-manager-3000-client }
       - name: gitleaks
-        run: docker run --rm -v "$PWD/metrc-formul8-os-platform:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 dir /repo --no-banner --redact
+        run: docker run --rm -v "$PWD/metrc-manager-3000-platform:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 dir /repo --no-banner --redact
       - uses: pnpm/action-setup@v4
         with: { version: 9.15.4 }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - working-directory: metrc-formul8-os-platform
+      - working-directory: metrc-manager-3000-platform
         run: |
           pnpm client:build
           pnpm install --frozen-lockfile

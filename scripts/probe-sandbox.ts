@@ -2,7 +2,7 @@
  * Quick probe script to inspect sandbox state (tags, items, etc.)
  * Usage: METRC_VENDOR_API_KEY_CO=... METRC_USER_API_KEY_CO=... npx tsx scripts/probe-sandbox.ts
  */
-import { MetrcClient } from '@metrc-formul8-os/client';
+import { MetrcClient } from '@metrc-manager-3000/client';
 
 const stateCode = process.argv[2] || 'CO';
 const license = process.argv[3] || 'SF-SBX-CO-21-8002';

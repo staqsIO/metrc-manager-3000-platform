@@ -20,7 +20,7 @@ CI runs type checking and tests, and scans the repository with gitleaks. Never c
 
 ## Security
 
-Do not open public issues for vulnerabilities. See `SECURITY.md` in the root repository (https://github.com/staqsIO/metrc-formul8-os).
+Do not open public issues for vulnerabilities. See `SECURITY.md` in the root repository (https://github.com/staqsIO/metrc-manager-3000).
 
 ## License
 

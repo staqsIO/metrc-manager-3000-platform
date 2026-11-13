@@ -15,7 +15,7 @@
  * that already tolerates 24h staleness.
  */
 
-import type { MetrcPackageAdjustReason } from '@metrc-formul8-os/client';
+import type { MetrcPackageAdjustReason } from '@metrc-manager-3000/client';
 
 const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 

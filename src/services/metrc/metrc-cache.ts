@@ -8,7 +8,7 @@
  * Write operations pass through to the inner client AND invalidate related caches.
  */
 
-import { MetrcApiError, MetrcRateLimitError } from '@metrc-formul8-os/client';
+import { MetrcApiError, MetrcRateLimitError } from '@metrc-manager-3000/client';
 
 import type {
   IMetrcClient,
