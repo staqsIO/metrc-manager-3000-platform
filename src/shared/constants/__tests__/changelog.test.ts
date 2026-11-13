@@ -8,6 +8,13 @@ import { CHANGELOG_ENTRIES } from '@/shared/constants/changelog';
 const APP_DIR = join(__dirname, '../../../app');
 
 describe('changelog links', () => {
+  it('has links of both kinds to check', () => {
+    // The two checks below assert an empty list, which also passes if no links remain.
+    const links = CHANGELOG_ENTRIES.map((e) => e.link).filter((l): l is string => !!l);
+    expect(links.some((l) => l.includes('[facilityId]'))).toBe(true);
+    expect(links.some((l) => !l.includes('[facilityId]'))).toBe(true);
+  });
+
   it('point at a page that exists, or are marked facility-scoped', () => {
     const broken = CHANGELOG_ENTRIES
       .map((e) => e.link)
