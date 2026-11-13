@@ -39,7 +39,7 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     description:
       'Compare how the same strain performs across all your facilities. A new collapsible section on the Strain Analysis page shows yield efficiency, lab pass rate, and growth duration side by side with color-coded badges highlighting meaningful differences.',
     type: 'feature',
-    link: '/analytics/strains',
+    link: '/facilities/[facilityId]/analytics/strains',
   },
   {
     date: '2026-02-24',
@@ -69,7 +69,7 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     description:
       'Set different maximum discount percentages for each product category. Flower, concentrates, edibles, and 8 other Metrc categories can each have their own ceiling. Categories without an override use the global max.',
     type: 'feature',
-    link: '/inventory/discounts/auto-config',
+    link: '/facilities/[facilityId]/inventory/discounts/auto-config',
   },
   {
     date: '2026-02-22',
@@ -77,7 +77,7 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     description:
       'Ask Copilot for AI-powered processing recommendations for your raw materials. The biomass page now shows strain, lab status, compliance badges, and fresh-frozen urgency alerts.',
     type: 'feature',
-    link: '/packages/biomass',
+    link: '/facilities/[facilityId]/packages/biomass',
   },
   {
     date: '2026-02-22',
@@ -85,7 +85,7 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     description:
       'Manage employee profiles, calculate labor cost per unit with the quick calculator, and create work logs tied to your facility operations.',
     type: 'feature',
-    link: '/labor',
+    link: '/facilities/[facilityId]/labor',
   },
   {
     date: '2026-02-22',
@@ -93,7 +93,7 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     description:
       'Analyze yield trends by strain, view genetic correlations and growth duration insights, and get data-driven recommendations for your next cultivation cycle.',
     type: 'feature',
-    link: '/analytics/yields',
+    link: '/facilities/[facilityId]/analytics/yields',
   },
   {
     date: '2026-02-22',
@@ -115,7 +115,7 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     description:
       'Expand any transfer row to see per-package delivery details. A new Rejected tab shows rejected deliveries at a glance.',
     type: 'improvement',
-    link: '/transfers',
+    link: '/facilities/[facilityId]/transfers',
   },
   {
     date: '2026-02-22',
@@ -137,7 +137,7 @@ export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     description:
       'Create, edit, and search strains, items, and locations directly in the platform. View Metrc IDs and sync status from detail modals.',
     type: 'feature',
-    link: '/catalog',
+    link: '/facilities/[facilityId]/catalog/items',
   },
   {
     date: '2026-02-19',
