@@ -30,7 +30,7 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState<'all' | 'unread'>('unread')
 
   const { data, isLoading } = trpc.notifications.list.useQuery(
-    { limit: 100, ...(filter === 'unread' ? { unreadOnly: true } : {}) },
+    { limit: 50, ...(filter === 'unread' ? { unreadOnly: true } : {}) },
     { enabled: status === 'authenticated', staleTime: 10_000, refetchOnWindowFocus: true },
   )
   const utils = trpc.useUtils()

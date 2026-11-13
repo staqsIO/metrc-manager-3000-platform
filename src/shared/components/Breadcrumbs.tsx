@@ -9,6 +9,10 @@ import { useFacilityId } from '@/shared/hooks/useFacilityId'
 import { FacilitySettingsGearButton } from '@/features/facilities/components/FacilitySettingsGearButton'
 import { StateOutline } from './StateOutline'
 
+// Facility route folders that group pages but have no page of their own; a crumb for
+// one renders as text, since linking it would 404. Breadcrumbs.test.ts keeps this in sync.
+export const SEGMENTS_WITHOUT_PAGE = new Set(['catalog'])
+
 export function Breadcrumbs() {
   const pathname = usePathname()
   const facilityId = useFacilityId()
@@ -40,8 +44,8 @@ export function Breadcrumbs() {
           return (
             <span key={href} className="flex items-center gap-1 shrink-0">
               <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
-              {isLast ? (
-                <span className="text-foreground font-medium">{label}</span>
+              {isLast || SEGMENTS_WITHOUT_PAGE.has(segment) ? (
+                <span className={isLast ? 'text-foreground font-medium' : undefined}>{label}</span>
               ) : (
                 <Link href={href} className="hover:text-foreground transition-colors">
                   {label}
