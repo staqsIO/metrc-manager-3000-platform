@@ -19,7 +19,7 @@
  *
  * TypeScript `private` is compile-time only — runtime JS has no access restriction.
  */
-import type { IMetrcClient } from '@metrc-formul8-os/client';
+import type { IMetrcClient } from '@metrc-manager-3000/client';
 
 function rewriteV1(endpoint: string): string {
   return endpoint.replace('/v1/', '/v2/');
@@ -227,7 +227,7 @@ export function patchClientForV2(client: IMetrcClient): IMetrcClient {
     return originalPut(rewriteV1(endpoint), data, params);
   };
 
-  // Patch delete if it exists on the client (added in @metrc-formul8-os/client v0.5.0)
+  // Patch delete if it exists on the client (added in @metrc-manager-3000/client v0.5.0)
   if (typeof c.delete === 'function') {
     const originalDelete = (c.delete as Fn).bind(c);
     c.delete = async (endpoint: string, params?: Record<string, string>) => {

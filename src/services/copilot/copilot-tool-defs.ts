@@ -1,6 +1,6 @@
 // Pure data: Copilot tool definitions (OpenAI-compatible function schemas)
 // Separated from copilot-tools.ts so client components can import without
-// pulling in server-side dependencies (node:crypto via @metrc-formul8-os/client).
+// pulling in server-side dependencies (node:crypto via @metrc-manager-3000/client).
 
 import type { ToolDefinition } from './openrouter-client';
 import { ACTIONS_ENABLED } from '../../shared/constants/feature-flags';
@@ -1538,7 +1538,7 @@ export const COPILOT_TOOLS: ToolDefinition[] = [
     function: {
       name: 'ask_knowledge_base',
       description: [
-        'Query the Formul8 expert knowledge base for cannabis domain expertise:',
+        'Query the expert knowledge base for cannabis domain expertise:',
         'compliance regulations (state + federal), formulation science, manufacturing processes,',
         'cultivation best practices, extraction methods, product development, and operational guidance.',
         '',

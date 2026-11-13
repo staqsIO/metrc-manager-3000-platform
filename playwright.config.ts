@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright E2E test configuration for formul8-metrc-platform.
+ * Playwright E2E test configuration for metrc-manager-3000-platform.
  *
  * @see https://playwright.dev/docs/test-configuration
  */

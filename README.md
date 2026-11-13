@@ -1,15 +1,15 @@
 # METRC Manager 3000
 
-A self-hosted web app for cannabis operators: METRC compliance and inventory dashboards, operational and financial analytics, and an AI Copilot. Built with Next.js, tRPC, Prisma and PostgreSQL.
+A self-hosted web app (formerly Metrc-Formul8-OS) for cannabis operators: METRC compliance and inventory dashboards, operational and financial analytics, and an AI Copilot. Built with Next.js, tRPC, Prisma and PostgreSQL.
 
 ## Run the full stack
 
-To run everything with Docker, use the root repository: https://github.com/staqsIO/metrc-formul8-os
+To run everything with Docker, use the root repository: https://github.com/staqsIO/metrc-manager-3000
 
-The Dockerfile in this repo builds with the parent (install) folder as context, since it also needs the sibling `metrc-formul8-os-client` checkout. From the install folder:
+The Dockerfile in this repo builds with the parent (install) folder as context, since it also needs the sibling `metrc-manager-3000-client` checkout. From the install folder:
 
 ```bash
-docker build -f metrc-formul8-os-platform/Dockerfile -t metrc-platform .
+docker build -f metrc-manager-3000-platform/Dockerfile -t metrc-platform .
 ```
 
 Brand name and logo are baked in at build time: pass `--build-arg NEXT_PUBLIC_BRAND_NAME=...` and `--build-arg NEXT_PUBLIC_BRAND_LOGO_URL=...` (the root docker compose maps its `BRAND_NAME` / `BRAND_LOGO_URL` settings to these). Setting them at runtime has no effect.
@@ -18,7 +18,7 @@ The image entrypoint takes one command: `web`, `migrate`, `sync`, `create-admin`
 
 ## Develop locally
 
-Requirements: Node 22, pnpm 9, Docker (for Postgres). The sibling `metrc-formul8-os-client` repo must be checked out next to this one.
+Requirements: Node 22, pnpm 9, Docker (for Postgres). The sibling `metrc-manager-3000-client` repo must be checked out next to this one.
 
 ```bash
 pnpm client:build
@@ -90,7 +90,7 @@ pnpm test:e2e    # end-to-end tests (playwright)
 
 ## Contributors
 
-Created by [Staqs](https://github.com/staqsIO), [Waev Tech](https://github.com/waevtech) and [UMB Advisors](https://github.com/UMB-Advisors). See the [root repository](https://github.com/staqsIO/metrc-formul8-os#contributors) for details.
+Created by [Staqs](https://github.com/staqsIO), [Waev Tech](https://github.com/waevtech) and [UMB Advisors](https://github.com/UMB-Advisors). See the [root repository](https://github.com/staqsIO/metrc-manager-3000#contributors) for details.
 
 ## License
 

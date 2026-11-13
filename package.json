@@ -1,5 +1,5 @@
 {
-  "name": "metrc-formul8-os-platform",
+  "name": "metrc-manager-3000-platform",
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
@@ -10,8 +10,8 @@
       "url": "https://staqs.io"
     },
     {
-      "name": "Formul8",
-      "url": "https://formul8.ai"
+      "name": "Waev Tech",
+      "url": "https://github.com/waevtech"
     },
     {
       "name": "UMB Advisors",
@@ -45,7 +45,7 @@
     "copilot:eval": "tsx src/services/copilot/evals/runner.ts"
   },
   "dependencies": {
-    "@metrc-formul8-os/client": "file:../metrc-formul8-os-client",
+    "@metrc-manager-3000/client": "file:../metrc-manager-3000-client",
     "@next-auth/prisma-adapter": "^1.0.7",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-avatar": "^1.1.11",

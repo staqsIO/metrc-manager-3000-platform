@@ -34,7 +34,7 @@ const fontNumeric = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   // Brand is a build-time setting (NEXT_PUBLIC_BRAND_*).
-  title: `${getBrand().name} Metrc Platform`,
+  title: getBrand().name,
   description: 'Cannabis compliance and inventory intelligence platform powered by Metrc',
   icons: {
     icon: [

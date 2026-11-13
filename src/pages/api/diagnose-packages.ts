@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { MetrcClient } from '@metrc-formul8-os/client';
+import { MetrcClient } from '@metrc-manager-3000/client';
 import { patchClientForV2 } from '@/services/metrc/metrc-v2-client';
 import { decrypt } from '@/lib/encryption';
 

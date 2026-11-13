@@ -22,7 +22,7 @@ export type {
   MetrcPackageAdjustReason,
   MetrcWasteMethod,
   IMetrcClient,
-} from '@metrc-formul8-os/client';
+} from '@metrc-manager-3000/client';
 
 // Re-import types needed by formatter functions below
 import type {
@@ -34,7 +34,7 @@ import type {
   MetrcHarvest,
   MetrcPlantBatch,
   MetrcPlantBatchWaste as _MetrcPlantBatchWaste,
-} from '@metrc-formul8-os/client';
+} from '@metrc-manager-3000/client';
 
 // Formatted types (camelCase, for frontend)
 export interface FormattedPackage {

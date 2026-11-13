@@ -9,7 +9,7 @@
  *   - DB: Business Rules, Compliance Alerts, Tolling Agreements, Audit Snapshots
  *
  * Usage:
- *   cd formul8-metrc-platform
+ *   cd metrc-manager-3000-platform
  *
  *   # Seed a specific facility comprehensively
  *   npx tsx scripts/seed-sandbox.ts --facilityId <FACILITY_ID>
@@ -1408,7 +1408,7 @@ async function seedFacility(facilityId: string) {
 
 // ── Main ──────────────────────────────────────────────────────────────
 async function main() {
-  console.log('Formul8 Comprehensive Sandbox Seeder');
+  console.log('METRC Manager 3000 Comprehensive Sandbox Seeder');
   console.log('====================================');
 
   if (!FACILITY_ID && !PROVISION_ALL) {

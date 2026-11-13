@@ -1,13 +1,13 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata in this file."
 type: software
-title: "Metrc-Formul8-OS — Platform"
+title: "METRC Manager 3000 — Platform"
 license: MIT
-repository-code: "https://github.com/staqsIO/metrc-formul8-os-platform"
+repository-code: "https://github.com/staqsIO/metrc-manager-3000-platform"
 authors:
   - name: "Staqs, Inc."
     website: "https://staqs.io"
-  - name: "Formul8"
-    website: "https://formul8.ai"
+  - name: "Waev Tech"
+    website: "https://github.com/waevtech"
   - name: "UMB Advisors"
     website: "https://umbadvisors.com"

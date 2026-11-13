@@ -1,6 +1,6 @@
 import type { MetrcFacility, PrismaClient } from '@prisma/client';
-import type { IMetrcClient } from '@metrc-formul8-os/client';
-import { MetrcClient, MetrcRateLimiter, withRetryClient, withRateLimitClient } from '@metrc-formul8-os/client';
+import type { IMetrcClient } from '@metrc-manager-3000/client';
+import { MetrcClient, MetrcRateLimiter, withRetryClient, withRateLimitClient } from '@metrc-manager-3000/client';
 import { patchClientForV2 } from './metrc-v2-client';
 import { decrypt } from '@/lib/encryption';
 import { prisma } from '@/lib/prisma';
@@ -15,7 +15,7 @@ type MetrcEnvironmentOrMock = 'mock' | 'sandbox' | 'production';
 const V2_REQUIRED_STATES = new Set(['MA', 'CA']);
 
 /**
- * Resolve the Formul8 vendor API key from environment variables.
+ * Resolve the METRC vendor API key from environment variables.
  * Keys are per-state, per-environment: METRC_VENDOR_KEY_{STATE}_{ENV}
  * Falls back to the per-facility encrypted key for backward compat.
  */

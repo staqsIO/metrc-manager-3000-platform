@@ -1149,7 +1149,7 @@ export const inventoryRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const facility = ctx.facility as MetrcFacility;
 
-      const { MetrcClient } = await import('@metrc-formul8-os/client');
+      const { MetrcClient } = await import('@metrc-manager-3000/client');
       const { patchClientForV2 } = await import('@/services/metrc/metrc-v2-client');
       const { decrypt } = await import('@/lib/encryption');
 
@@ -1261,7 +1261,7 @@ export const inventoryRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const facility = ctx.facility as MetrcFacility;
 
-      const { MetrcClient } = await import('@metrc-formul8-os/client');
+      const { MetrcClient } = await import('@metrc-manager-3000/client');
       const { patchClientForV2 } = await import('@/services/metrc/metrc-v2-client');
       const { decrypt } = await import('@/lib/encryption');
 

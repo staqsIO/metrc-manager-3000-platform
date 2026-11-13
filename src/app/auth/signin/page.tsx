@@ -70,7 +70,7 @@ export default function SignInPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center">
             <BrandMark />
           </div>
-          <h2 className="text-2xl font-bold">{brand.name} Metrc Platform</h2>
+          <h2 className="text-2xl font-bold">{brand.name}</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Cannabis compliance and inventory intelligence
           </p>

@@ -701,7 +701,7 @@ export const transfersRouter = createTRPCRouter({
       const facility = ctx.facility as MetrcFacility;
 
       // Import raw factory to build an uncached client for diagnostics
-      const { MetrcClient } = await import('@metrc-formul8-os/client');
+      const { MetrcClient } = await import('@metrc-manager-3000/client');
       const { patchClientForV2 } = await import('@/services/metrc/metrc-v2-client');
       const { decrypt } = await import('@/lib/encryption');
 
